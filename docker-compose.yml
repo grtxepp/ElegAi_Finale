@@ -1,0 +1,20 @@
+# Optional local MySQL 8 for ElegAI development.
+# Usage: docker compose up -d mysql
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: elegai-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: elegai
+      MYSQL_USER: elegai
+      MYSQL_PASSWORD: elegai_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - elegai_mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  elegai_mysql_data:

@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Render Blueprint — deploys the ElegAI API to Render's free tier.
+#
+# How to use:
+#   1. Push this repo to GitHub.
+#   2. Render dashboard → New → Blueprint → connect the repo.
+#   3. It creates the web service; then set the env vars it asks for (the
+#      "sync: false" values below are entered in the Render dashboard).
+#   4. Deploy. Backend auto-creates schema + seeds the catalog on first boot.
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  - type: web
+    name: elegai-api
+    runtime: docker
+    repo: https://github.com/YOUR_GITHUB_USER/elegai   # ← change to your repo URL
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        sync: false          # enter in dashboard: your TiDB/MySQL host
+      - key: DB_PORT
+        sync: false          # TiDB Serverless = 4000, standard MySQL = 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false          # "elegai"
+      - key: DB_SSL
+        sync: false          # "true" for TiDB Cloud, "false" for standard MySQL
+      # Optional AI keys — set these and the stylist uses cloud AI:
+      # - key: GEMINI_API_KEY
+      #   sync: false
+      # - key: OPENAI_API_KEY
+      #   sync: false

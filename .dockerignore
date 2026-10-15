@@ -1,0 +1,20 @@
+# Keep the image lean — these are never needed in the container
+node_modules
+dist
+.git
+*.zip
+uploads/*
+backend/uploads/*
+mobile
+.github
+DEPLOY.md
+RUN-LOCALLY.md
+docker-compose.yml
+setup.sh
+
+# Never bake local secrets into the image (env vars come from the host)
+.env
+**/.env
+.env.*
+**/.env.*
+!**/.env.example

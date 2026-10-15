@@ -1,0 +1,41 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Build the ElegAI Android APK entirely in the cloud — your laptop stays off.
+#
+# Setup (one time):
+#   1. Push this repo to GitHub.
+#   2. expo.dev → Sign in → create an access token (Settings → Access tokens).
+#   3. GitHub repo → Settings → Secrets and variables → Actions →
+#      New repository secret → name EXPO_TOKEN, paste the token.
+#
+# Usage:
+#   GitHub repo → Actions tab → "Build ElegAI APK" → Run workflow.
+#   The APK download link appears in the run log (~10-15 min, free).
+# ─────────────────────────────────────────────────────────────────────────────
+name: Build ElegAI APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Build APK with EAS (cloud build)
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx eas-cli build --platform android --profile preview --non-interactive
