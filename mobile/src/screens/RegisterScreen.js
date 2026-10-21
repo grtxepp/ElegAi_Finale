@@ -34,7 +34,8 @@ export default function RegisterScreen({ navigation }) {
     setLoading(true);
     try {
       await register(form.name.trim(), form.email.trim(), form.password);
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      if (navigation.canGoBack()) navigation.goBack();
+      else navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
     } catch (e) {
       setError(errMsg(e, 'Unable to create your account.'));
     } finally {
@@ -61,6 +62,9 @@ export default function RegisterScreen({ navigation }) {
           <PasswordField label="Confirm password" value={form.confirm} onChangeText={set('confirm')} placeholder="Repeat your password" />
           <PrimaryButton title="Create my account" onPress={submit} loading={loading} />
           <GhostButton title="Already have an account? Sign in" onPress={() => navigation.navigate('Login')} />
+          {navigation.canGoBack() ? (
+            <GhostButton title="Continue browsing" onPress={() => navigation.popToTop()} />
+          ) : null}
         </View>
       </KeyboardAvoidingView>
     </Screen>

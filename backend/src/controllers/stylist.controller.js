@@ -50,6 +50,7 @@ export const recommend = asyncHandler(async (req, res) => {
         style: preferences.style || profile.preferred_style || '',
         color: preferences.color || profile.preferred_color || '',
         fit: preferences.fit || profile.preferred_fit || '',
+        size: preferences.size || profile.preferred_size || '',
         heightCm: preferences.heightCm || profile.height_cm || null,
         measurements: preferences.measurements || profile.measurements,
       };

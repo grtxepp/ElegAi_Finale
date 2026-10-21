@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, Field, PrimaryButton, ChipRow, ErrorBox, SectionTitle } from '../components';
+import { Screen, Field, PrimaryButton, ChipRow, ErrorBox, SectionTitle, Loading } from '../components';
 import api, { errMsg } from '../api';
 import { useCart } from '../context/CartContext';
 import { C, card } from '../theme';
@@ -10,7 +10,7 @@ import { formatPeso } from '../utils';
 const PAYMENTS = ['Cash on Delivery', 'GCash', 'Card'];
 
 export default function CheckoutScreen({ navigation }) {
-  const { cart, clearLocal } = useCart();
+  const { cart, loading, clearLocal } = useCart();
   const [form, setForm] = useState({
     fullName: '', line1: '', line2: '', city: '', province: '', postal: '', phone: '',
   });
@@ -20,6 +20,8 @@ export default function CheckoutScreen({ navigation }) {
   const [placed, setPlaced] = useState(null);
 
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
+
+  if (loading) return <Screen><Loading /></Screen>;
 
   if (placed) {
     return (

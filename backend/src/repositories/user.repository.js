@@ -24,24 +24,26 @@ export const updateCustomerProfile = (userId, fields) =>
       'UPDATE users SET name = COALESCE(?, name), email = COALESCE(?, email) WHERE user_id = ?',
       [fields.name, fields.email, userId]
     );
-    await connection.query(
-      `INSERT INTO customer_profiles (user_id, height_cm, measurements, preferred_style, preferred_color, preferred_fit)
-       VALUES (?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE
-         height_cm = VALUES(height_cm),
-         measurements = VALUES(measurements),
-         preferred_style = VALUES(preferred_style),
-         preferred_color = VALUES(preferred_color),
-         preferred_fit = VALUES(preferred_fit)`,
-      [
-        userId,
-        fields.heightCm,
-        fields.measurements,
-        fields.preferredStyle,
-        fields.preferredColor,
-        fields.preferredFit,
-      ]
-    );
+    const profileFields = [
+      ['height_cm', fields.heightCm],
+      ['measurements', fields.measurements],
+      ['preferred_style', fields.preferredStyle],
+      ['preferred_color', fields.preferredColor],
+      ['preferred_fit', fields.preferredFit],
+      ['preferred_size', fields.preferredSize],
+    ].filter(([, value]) => value !== undefined);
+
+    if (profileFields.length) {
+      const columns = profileFields.map(([column]) => column).join(', ');
+      const placeholders = profileFields.map(() => '?').join(', ');
+      const updates = profileFields.map(([column]) => `${column} = VALUES(${column})`).join(', ');
+      await connection.query(
+        `INSERT INTO customer_profiles (user_id, ${columns})
+         VALUES (?, ${placeholders})
+         ON DUPLICATE KEY UPDATE ${updates}`,
+        [userId, ...profileFields.map(([, value]) => value)]
+      );
+    }
   });
 
 export const updatePassword = (userId, passwordHash) =>

@@ -29,6 +29,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     preferredStyle,
     preferredColor,
     preferredFit,
+    preferredSize,
   } = req.body;
 
   if (name !== undefined && String(name).trim() === '') throw badRequest('Name cannot be empty.');
@@ -43,6 +44,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
     const height = Number(heightCm);
     if (!Number.isFinite(height) || height < 100 || height > 250) {
       throw badRequest('Height must be between 100 and 250 cm.');
+    }
+  }
+  if (preferredSize !== undefined && preferredSize !== null && preferredSize !== '') {
+    const allowedSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
+    if (!allowedSizes.includes(String(preferredSize))) {
+      throw badRequest(`Preferred size must be one of: ${allowedSizes.join(', ')}.`);
     }
   }
 
@@ -60,11 +67,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
   await updateCustomerProfile(req.user.userId, {
     name: name !== undefined ? String(name).trim() : null,
     email: email !== undefined ? String(email).toLowerCase().trim() : null,
-    heightCm: heightCm || null,
-    measurements: measurementsJson || null,
-    preferredStyle: preferredStyle || null,
-    preferredColor: preferredColor || null,
-    preferredFit: preferredFit || null,
+    heightCm: heightCm !== undefined ? heightCm || null : undefined,
+    measurements: measurements !== undefined ? measurementsJson || null : undefined,
+    preferredStyle: preferredStyle !== undefined ? preferredStyle || null : undefined,
+    preferredColor: preferredColor !== undefined ? preferredColor || null : undefined,
+    preferredFit: preferredFit !== undefined ? preferredFit || null : undefined,
+    preferredSize: preferredSize !== undefined ? preferredSize || null : undefined,
   });
 
   const user = await findUserById(req.user.userId);

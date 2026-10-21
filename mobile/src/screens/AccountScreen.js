@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Screen, PrimaryButton } from '../components';
+import { Screen, PrimaryButton, GhostButton } from '../components';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { C, DISPLAY, card } from '../theme';
@@ -15,11 +15,56 @@ export default function AccountScreen({ navigation }) {
   const handleLogout = () => {
     Alert.alert('Logout', 'Sign out of ElegAI?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', style: 'destructive', onPress: () => logout() },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+          navigation.getParent()?.reset({ index: 0, routes: [{ name: 'Main' }] });
+        },
+      },
     ]);
   };
 
-  if (!user) return <Screen />;
+  if (!user) {
+    return (
+      <Screen>
+        <View style={{ marginTop: 36 }}>
+          <Text style={styles.guestLogo}>
+            Eleg<Text style={{ color: C.gold }}>AI</Text>
+          </Text>
+          <Text style={styles.guestTitle}>Sign in to your account</Text>
+          <Text style={styles.guestText}>
+            Save your style profile, sync your cart, track orders and follow replies from the boutique.
+          </Text>
+        </View>
+
+        <View style={{ marginTop: 24, gap: 10 }}>
+          <PrimaryButton title="Sign in" onPress={() => navigation.navigate('Login')} />
+          <GhostButton title="Create an account" onPress={() => navigation.navigate('Register')} />
+        </View>
+
+        <View style={[card, { marginTop: 20, padding: 8 }]}>
+          <Pressable
+            onPress={() => navigation.navigate('Catalog')}
+            style={({ pressed }) => [styles.menuRow, pressed && { backgroundColor: C.ivory }]}
+          >
+            <Ionicons name="shirt-outline" size={20} color={C.goldDark} />
+            <Text style={styles.menuLabel}>Browse the collection</Text>
+            <Ionicons name="chevron-forward" size={18} color={C.grayLight} />
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('Stylist')}
+            style={({ pressed }) => [styles.menuRow, pressed && { backgroundColor: C.ivory }]}
+          >
+            <Ionicons name="sparkles-outline" size={20} color={C.goldDark} />
+            <Text style={styles.menuLabel}>Ask the AI Stylist</Text>
+            <Ionicons name="chevron-forward" size={18} color={C.grayLight} />
+          </Pressable>
+        </View>
+      </Screen>
+    );
+  }
 
   const initials = user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
@@ -55,6 +100,7 @@ export default function AccountScreen({ navigation }) {
             ['Style', profile?.preferredStyle],
             ['Color', profile?.preferredColor],
             ['Fit', profile?.preferredFit],
+            ['Size', profile?.preferredSize],
             ['Height', profile?.heightCm ? `${profile.heightCm} cm` : null],
             ['Member since', formatDate(user.createdAt)],
           ]
@@ -133,4 +179,7 @@ const styles = StyleSheet.create({
   statLabel: { color: C.gray, fontSize: 12, marginTop: 2 },
   menuRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 13, borderRadius: 12 },
   menuLabel: { flex: 1, fontSize: 15, fontWeight: '600', color: C.charcoal },
+  guestLogo: { fontFamily: DISPLAY, fontSize: 40, fontWeight: '700', color: C.charcoal },
+  guestTitle: { fontFamily: DISPLAY, fontSize: 28, fontWeight: '700', color: C.charcoal, marginTop: 8 },
+  guestText: { color: C.gray, fontSize: 14, lineHeight: 21, marginTop: 8 },
 });

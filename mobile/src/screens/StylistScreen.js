@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { ChipRow, PrimaryButton, EmptyState, ErrorBox, Eyebrow, SectionTitle } from '../components';
 import api, { errMsg } from '../api';
+import { useAuth } from '../context/AuthContext';
 import { C, DISPLAY, card } from '../theme';
 import { formatPeso, imgUrl } from '../utils';
 
@@ -16,6 +17,7 @@ const FITS = ['A-Line', 'Mermaid', 'Ball Gown', 'Sheath', 'Fit & Flare', 'Slim F
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
 
 export default function StylistScreen({ navigation }) {
+  const { user } = useAuth();
   const [form, setForm] = useState({
     occasion: '', style: '', color: '', fit: '', size: '', heightCm: '', measurements: '', notes: '',
   });
@@ -65,6 +67,13 @@ export default function StylistScreen({ navigation }) {
   };
 
   const submitRequest = async () => {
+    if (!user) {
+      Alert.alert('Sign in required', 'Please sign in to send this look to the boutique.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign in', onPress: () => navigation.navigate('Login') },
+      ]);
+      return;
+    }
     setRequestError('');
     setRequestBusy(true);
     try {
@@ -98,6 +107,20 @@ export default function StylistScreen({ navigation }) {
       <Text style={styles.intro}>
         The stylist analyzes your occasion, style, color, fit and measurements — plus an optional photo — and recommends real pieces with reasons.
       </Text>
+
+      <Pressable
+        onPress={() => navigation.navigate('StylistChat')}
+        style={({ pressed }) => [styles.chatCta, pressed && { opacity: 0.88 }]}
+      >
+        <View style={styles.chatIcon}>
+          <Ionicons name="chatbubble-ellipses-outline" size={20} color={C.goldDark} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.chatTitle}>Chat with ElegAI</Text>
+          <Text style={styles.chatText}>Ask questions or generate a look image to send to the boutique.</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={C.grayLight} />
+      </Pressable>
 
       {error ? <View style={{ marginTop: 12 }}><ErrorBox message={error} /></View> : null}
 
@@ -248,6 +271,10 @@ export default function StylistScreen({ navigation }) {
 const styles = StyleSheet.create({
   pageTitle: { fontFamily: DISPLAY, fontSize: 32, fontWeight: '700', color: C.charcoal, marginTop: 6 },
   intro: { color: C.gray, fontSize: 14, lineHeight: 21, marginTop: 8 },
+  chatCta: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderRadius: 16, padding: 14, marginTop: 16 },
+  chatIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(201,162,39,0.15)', alignItems: 'center', justifyContent: 'center' },
+  chatTitle: { fontFamily: DISPLAY, fontSize: 16, fontWeight: '700', color: C.charcoal },
+  chatText: { color: C.gray, fontSize: 12, lineHeight: 17, marginTop: 2 },
   label: { fontSize: 11, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', color: C.gray, marginTop: 18, marginBottom: 8 },
   input: { backgroundColor: C.white, borderWidth: 1, borderColor: 'rgba(31,31,31,0.15)', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.charcoal },
   ghostBtn: { borderRadius: 999, borderWidth: 1, borderColor: 'rgba(31,31,31,0.2)', paddingHorizontal: 16, paddingVertical: 10 },

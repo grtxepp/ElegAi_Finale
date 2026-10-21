@@ -2,13 +2,33 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Pressable, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, PrimaryButton, EmptyState, Loading } from '../components';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { formatPeso, imgUrl } from '../utils';
 import { C, DISPLAY, card } from '../theme';
 import { errMsg } from '../api';
 
 export default function CartScreen({ navigation }) {
+  const { user } = useAuth();
   const { cart, loading, updateQty, removeItem } = useCart();
+
+  if (!user) {
+    return (
+      <Screen>
+        <EmptyState
+          icon="lock-closed-outline"
+          title="Sign in to view your cart"
+          message="Your cart is saved to your ElegAI account, so sign in to keep shopping across devices."
+          action={
+            <View style={{ marginTop: 16, width: '100%', gap: 10 }}>
+              <PrimaryButton title="Sign in" onPress={() => navigation.navigate('Login')} />
+              <PrimaryButton title="Create an account" onPress={() => navigation.navigate('Register')} />
+            </View>
+          }
+        />
+      </Screen>
+    );
+  }
 
   if (loading) return <Screen><Loading /></Screen>;
 

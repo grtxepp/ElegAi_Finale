@@ -79,7 +79,7 @@ export default function OrdersScreen({ navigation }) {
                 <View>
                   <Text style={styles.orderId}>Order #{item.order_id}</Text>
                   <Text style={styles.orderMeta}>
-                    {formatDateTime(item.created_at)} · {item.item_count} item{item.item_count === 1 ? '' : 's'}
+                    {formatDateTime(item.created_at)} A� {item.item_count} item{item.item_count === 1 ? '' : 's'} A� {item.payment_method}
                   </Text>
                 </View>
               </View>

@@ -1,8 +1,8 @@
 # ElegAI Mobile App (React Native / Expo)
 
 A **real native mobile app** version of ElegAI — the same backend and AI engine as the web app,
-with a phone-native UI: bottom tab bar, native navigation, image picker for the AI stylist photo,
-and session persistence.
+with a phone-native UI: bottom tab bar, native navigation, guest browsing, AI stylist chat and
+image generation, photo-based recommendations, order/request tracking, and session persistence.
 
 ## How it works
 
@@ -41,13 +41,15 @@ mobile/
         ├── HomeScreen.js             # hero + categories + featured
         ├── CatalogScreen.js          # search + filters + grid
         ├── ProductScreen.js          # details + size + qty + add to cart
-        ├── StylistScreen.js          # ✨ AI stylist (photo picker + recommendations)
+        ├── StylistScreen.js          # AI recommendations (photo picker)
+        ├── StylistChatScreen.js      # AI chat + generated look + request to boutique
         ├── CartScreen.js
         ├── CheckoutScreen.js
         ├── OrdersScreen.js
-        ├── OrderDetailScreen.js      # tracking timeline + cancel
+        ├── OrderDetailScreen.js      # tracking timeline + item images + cancel
+        ├── RequestsScreen.js         # style requests + boutique replies
         ├── ProfileScreen.js          # account + style preferences
-        └── AccountScreen.js          # user hub + menu
+        └── AccountScreen.js          # user hub + menu (guest sign-in state)
 ```
 
 ## Run it on your phone (no Android Studio needed!)
@@ -96,7 +98,7 @@ The app loads on your phone in seconds. Any change you save to the code reloads 
 2. `src/context/AuthContext.js` — sessions, login/logout flow.
 3. `App.js` — navigation: stack screens vs bottom tabs.
 4. `src/screens/CatalogScreen.js` + `ProductScreen.js` — the shopping flow.
-5. `src/screens/StylistScreen.js` — the AI feature (multipart upload + recommendations).
+5. `src/screens/StylistScreen.js` + `StylistChatScreen.js` — AI recommendations, chat, generated looks and boutique requests.
 6. `src/theme.js` + `src/components.js` — design system (same palette as the web app).
 
 ## Building a standalone APK (later, when you're ready)

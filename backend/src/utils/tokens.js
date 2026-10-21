@@ -28,6 +28,7 @@ export const publicUser = (user, profile = null) => ({
         preferredStyle: profile.preferred_style,
         preferredColor: profile.preferred_color,
         preferredFit: profile.preferred_fit,
+        preferredSize: profile.preferred_size,
       }
     : null,
 });

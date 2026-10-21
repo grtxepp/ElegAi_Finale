@@ -30,16 +30,17 @@ export const JWT_SECRET = configuredJwtSecret || developmentJwtSecret;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 // Cloudflare Turnstile provides a free server-verified bot check. Development
-// falls back to Cloudflare's official public test key pair. Production enables
-// the check when a real secret is configured (or when CAPTCHA_ENABLED=true).
+// falls back to Cloudflare's official public test key pair. In production the
+// check is opt-in: set CAPTCHA_ENABLED=true only after the deployed hostname is
+// whitelisted in Turnstile. Both keys must be present for it to turn on, so a
+// missing key or a temporary hostname can never lock users out of auth.
 export const TURNSTILE_SITE_KEY =
   process.env.TURNSTILE_SITE_KEY || (IS_PROD ? '' : '1x00000000000000000000AA');
 export const TURNSTILE_SECRET_KEY =
   process.env.TURNSTILE_SECRET_KEY || (IS_PROD ? '' : '1x0000000000000000000000000000000AA');
-export const CAPTCHA_ENABLED = parseBool(
-  process.env.CAPTCHA_ENABLED,
-  !IS_PROD || Boolean(TURNSTILE_SECRET_KEY)
-);
+const CAPTCHA_CONFIGURED = Boolean(TURNSTILE_SITE_KEY && TURNSTILE_SECRET_KEY);
+export const CAPTCHA_ENABLED =
+  parseBool(process.env.CAPTCHA_ENABLED, !IS_PROD) && CAPTCHA_CONFIGURED;
 
 export const DB = {
   host: process.env.DB_HOST || '127.0.0.1',

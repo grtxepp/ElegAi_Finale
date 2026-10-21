@@ -18,7 +18,7 @@ const loadPreferences = async (userId) => {
       style: profile.preferred_style || '',
       color: profile.preferred_color || '',
       fit: profile.preferred_fit || '',
-      size: '',
+      size: profile.preferred_size || '',
     };
   } catch {
     return null;

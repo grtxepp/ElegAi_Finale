@@ -78,6 +78,7 @@ export default function Dashboard() {
             ['Style', user.profile.preferredStyle],
             ['Color', user.profile.preferredColor],
             ['Fit', user.profile.preferredFit],
+            ['Size', user.profile.preferredSize],
             ['Height', user.profile.heightCm ? `${user.profile.heightCm} cm` : null],
           ]
             .filter(([, v]) => v)

@@ -44,6 +44,17 @@ async function ensureLookRequestColumns(conn) {
   }
 }
 
+/** Add profile columns introduced after the first release to existing databases. */
+async function ensureProfileColumns(conn) {
+  const [columns] = await conn.query('SHOW COLUMNS FROM customer_profiles');
+  const names = new Set(columns.map((column) => column.Field));
+  if (!names.has('preferred_size')) {
+    await conn.query(
+      'ALTER TABLE customer_profiles ADD COLUMN preferred_size VARCHAR(20) NULL AFTER preferred_fit'
+    );
+  }
+}
+
 /**
  * Idempotent database bootstrap:
  *  1. Create the database if it does not exist.
@@ -89,6 +100,7 @@ export async function initDatabase() {
   }
 
   await ensureLookRequestColumns(conn);
+  await ensureProfileColumns(conn);
   await ensureSingleAdmin(conn);
 
   // Only seed sample orders on a brand-new database. Never attach demo orders

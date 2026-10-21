@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, Loading, ErrorBox, PrimaryButton, StatusBadge, SectionTitle } from '../components';
 import api, { errMsg } from '../api';
 import { C, DISPLAY, card } from '../theme';
-import { formatPeso, formatDateTime } from '../utils';
+import { formatPeso, formatDateTime, imgUrl } from '../utils';
 
 const TIMELINE = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered'];
 
-export default function OrderDetailScreen({ route }) {
+export default function OrderDetailScreen({ route, navigation }) {
   const { id } = route.params;
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -100,10 +100,15 @@ export default function OrderDetailScreen({ route }) {
       <View style={[card, { marginTop: 14 }]}>
         <SectionTitle>Items</SectionTitle>
         {order.items.map((item) => (
-          <View key={item.order_item_id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+          <View key={item.order_item_id} style={styles.itemRow}>
+            <Pressable onPress={() => navigation.navigate('Product', { id: item.product_id })}>
+              <Image source={{ uri: imgUrl(item.image_url) }} style={styles.itemImage} />
+            </Pressable>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: '600', color: C.charcoal }}>{item.name}</Text>
-              <Text style={{ color: C.gray, fontSize: 12 }}>{item.color} · Qty {item.quantity}</Text>
+              <Pressable onPress={() => navigation.navigate('Product', { id: item.product_id })}>
+                <Text style={{ fontWeight: '600', color: C.charcoal }}>{item.name}</Text>
+              </Pressable>
+              <Text style={{ color: C.gray, fontSize: 12 }}>{item.color} A� Qty {item.quantity}</Text>
             </View>
             <Text style={{ fontWeight: '600' }}>{formatPeso(item.price * item.quantity)}</Text>
           </View>
@@ -123,6 +128,7 @@ export default function OrderDetailScreen({ route }) {
           {addr.line2 ? <Text style={styles.addrLine}>{addr.line2}</Text> : null}
           <Text style={styles.addrLine}>{addr.city}, {addr.province} {addr.postal}</Text>
           <Text style={styles.addrLine}>{addr.phone}</Text>
+          {addr.notes ? <Text style={styles.addrNote}>{addr.notes}</Text> : null}
         </View>
         <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(31,31,31,0.08)', marginTop: 12, paddingTop: 12 }}>
           <Text style={styles.payLabel}>Payment</Text>
@@ -144,5 +150,8 @@ const styles = StyleSheet.create({
   lineOff: { backgroundColor: 'rgba(31,31,31,0.1)' },
   stepLabel: { fontSize: 10, fontWeight: '600', marginTop: 4 },
   addrLine: { color: C.gray, fontSize: 14, marginTop: 2 },
+  addrNote: { color: C.gray, fontSize: 13, fontStyle: 'italic', backgroundColor: C.ivory, borderRadius: 8, padding: 8, marginTop: 8 },
   payLabel: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: C.gray },
+  itemRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
+  itemImage: { width: 52, height: 68, borderRadius: 8, backgroundColor: C.ivoryDark },
 });

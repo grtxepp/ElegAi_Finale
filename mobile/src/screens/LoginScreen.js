@@ -25,7 +25,8 @@ export default function LoginScreen({ navigation }) {
         Alert.alert('Admin detected', 'The admin console runs on the web app. Signing you out of the mobile storefront.');
         // The web app is at the same backend (admin routes are web-only).
       }
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      if (navigation.canGoBack()) navigation.goBack();
+      else navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
     } catch (e) {
       setError(errMsg(e, 'Unable to sign in.'));
     } finally {
@@ -67,6 +68,9 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.footer}>
           <Text style={styles.footerText}>New to ElegAI?</Text>
           <GhostButton title="Create an account" onPress={() => navigation.navigate('Register')} />
+          {navigation.canGoBack() ? (
+            <GhostButton title="Continue browsing" onPress={() => navigation.popToTop()} />
+          ) : null}
         </View>
       </KeyboardAvoidingView>
     </Screen>

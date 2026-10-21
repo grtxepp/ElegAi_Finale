@@ -25,6 +25,7 @@ import OrdersScreen from './src/screens/OrdersScreen';
 import OrderDetailScreen from './src/screens/OrderDetailScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import RequestsScreen from './src/screens/RequestsScreen';
+import StylistChatScreen from './src/screens/StylistChatScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -83,16 +84,15 @@ function RootNavigator() {
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
-      {!user ? (
+      <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="Product" component={ProductScreen} options={{ title: '' }} />
+      <Stack.Screen name="StylistChat" component={StylistChatScreen} options={{ title: 'AI Stylist chat' }} />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Forgot" component={ForgotPasswordScreen} options={{ title: 'Reset password' }} />
+
+      {user && (
         <>
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Forgot" component={ForgotPasswordScreen} options={{ title: 'Reset password' }} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="Product" component={ProductScreen} options={{ title: '' }} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ title: 'Checkout' }} />
           <Stack.Screen name="Orders" component={OrdersScreen} options={{ title: 'My orders' }} />
           <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ title: 'Order details' }} />

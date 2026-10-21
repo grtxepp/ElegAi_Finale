@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS customer_profiles (
   preferred_style VARCHAR(60) NULL,
   preferred_color VARCHAR(40) NULL,
   preferred_fit   VARCHAR(60) NULL,
+  preferred_size  VARCHAR(20) NULL,
   CONSTRAINT fk_profile_user FOREIGN KEY (user_id)
     REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

@@ -15,6 +15,7 @@ export default function Profile() {
     preferredStyle: profile.preferredStyle || '',
     preferredColor: profile.preferredColor || '',
     preferredFit: profile.preferredFit || '',
+    preferredSize: profile.preferredSize || '',
     heightCm: profile.heightCm || '',
     measurements: profile.measurements
       ? typeof profile.measurements === 'string'
@@ -60,6 +61,7 @@ export default function Profile() {
         preferredStyle: style.preferredStyle || null,
         preferredColor: style.preferredColor || null,
         preferredFit: style.preferredFit || null,
+        preferredSize: style.preferredSize || null,
         heightCm: style.heightCm ? Number(style.heightCm) : null,
         measurements: style.measurements || null,
       });

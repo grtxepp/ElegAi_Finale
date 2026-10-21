@@ -60,6 +60,7 @@ export default function ProfileScreen() {
         preferredStyle: style.preferredStyle || null,
         preferredColor: style.preferredColor || null,
         preferredFit: style.preferredFit || null,
+        preferredSize: style.preferredSize || null,
         heightCm: style.heightCm ? Number(style.heightCm) : null,
         measurements: style.measurements || null,
       });

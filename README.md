@@ -74,7 +74,7 @@ The frontend has no database credentials and never runs SQL. Backend controllers
 - AI API keys and the Turnstile secret stay in backend environment variables, never in frontend code.
 - Passwords are hashed with **bcrypt**. Sign-in/registration returns a signed **JWT access token** (default expiry: 7 days, configurable with `JWT_EXPIRES_IN`), which the frontend sends as `Authorization: Bearer <token>`; admin routes check the role in that token.
 - Password reset uses a 6-digit code. Only a SHA-256 hash of the code (bound to the user id) is stored; it expires after 15 minutes and can be used once. The code is normally emailed over SMTP, but an administrator can also generate one from **Admin → Customers** and share it directly (useful when no mail server is configured). There is no separate refresh-token flow; users sign in again after the JWT expires.
-- Cloudflare Turnstile tokens are checked server-side. Authentication endpoints have stricter per-IP limits, with a general API limit as a backstop.
+- Cloudflare Turnstile tokens are checked server-side. The widget is on by default in development (official test keys) but opt-in in production: set `CAPTCHA_ENABLED=true` only after whitelisting the deployed hostname. Authentication endpoints have stricter per-IP limits, with a general API limit as a backstop.
 - Inputs are validated on the server, uploads are checked by MIME type and size, and Helmet + CORS are configured on the API.
 
 ### CAPTCHA, rate-limit, and token configuration
