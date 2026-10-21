@@ -73,7 +73,7 @@ The frontend has no database credentials and never runs SQL. Backend controllers
 - The browser only calls the Express API through `/api`; it never connects to the database.
 - AI API keys and the Turnstile secret stay in backend environment variables, never in frontend code.
 - Passwords are hashed with **bcrypt**. Sign-in/registration returns a signed **JWT access token** (default expiry: 7 days, configurable with `JWT_EXPIRES_IN`), which the frontend sends as `Authorization: Bearer <token>`; admin routes check the role in that token.
-- Password reset uses a 6-digit code emailed to the user. Only a SHA-256 hash of the code (bound to the user id) is stored; it expires after 15 minutes and can be used once. There is no separate refresh-token flow; users sign in again after the JWT expires.
+- Password reset uses a 6-digit code. Only a SHA-256 hash of the code (bound to the user id) is stored; it expires after 15 minutes and can be used once. The code is normally emailed over SMTP, but an administrator can also generate one from **Admin → Customers** and share it directly (useful when no mail server is configured). There is no separate refresh-token flow; users sign in again after the JWT expires.
 - Cloudflare Turnstile tokens are checked server-side. Authentication endpoints have stricter per-IP limits, with a general API limit as a backstop.
 - Inputs are validated on the server, uploads are checked by MIME type and size, and Helmet + CORS are configured on the API.
 
@@ -230,6 +230,7 @@ Elegant Ivory A-Line Wedding Gown
 | GET | `/api/auth/me` | user | Current user + profile |
 | POST | `/api/auth/forgot-password` | public | Email a 6-digit reset code (dev returns code) |
 | POST | `/api/auth/reset-password` | public | Consume code + set new password |
+| POST | `/api/admin/customers/:id/reset-code` | admin | Generate a shareable 6-digit reset code |
 | GET/PUT | `/api/profile` | user | Read / update profile & style preferences |
 | POST | `/api/profile/change-password` | user | Change password |
 | GET | `/api/products` | public | List / search / filter / sort / paginate |
@@ -304,5 +305,6 @@ Order statuses: `Pending → Confirmed → Processing → Shipped → Delivered`
   handles stylist recommendations and optional photo analysis; it does **not** generate images at runtime.
 - Password reset codes are sent over SMTP. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
   `SMTP_PASS` and `MAIL_FROM` in `backend/.env`. If SMTP is not configured, the code is returned
-  in the API response in development only. `APP_URL` is not needed for resets because the user
-  enters the code instead of clicking a link.
+  in the API response in development only, and an admin can generate a code for any customer from
+  **Admin → Customers** in production. `APP_URL` is not needed for resets because the user enters
+  the code instead of clicking a link.

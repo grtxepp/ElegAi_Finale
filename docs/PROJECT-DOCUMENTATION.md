@@ -177,7 +177,7 @@ sequenceDiagram
 - **No real payments** — checkout is simulated (COD / GCash / Card demo).
 - **No virtual try-on** — recommendations and generated looks, but no AR fitting.
 - **In-memory rate limiter** — fine for one instance; needs Redis at scale.
-- **Password reset** — a 6-digit code is sent by email over SMTP; without SMTP config the code is shown in development only. The code is hashed in the database, expires after 15 minutes, and is single-use.
+- **Password reset** — a 6-digit code is sent by email over SMTP; without SMTP config the code is shown in development only, and the admin can issue a code to a customer from the Customers page. The code is hashed in the database, expires after 15 minutes, and is single-use.
 - **Single-instance DB limits** — TiDB Serverless tier has connection/throughput caps.
 - **Content moderation** — generated images may need filtering for production use.
 

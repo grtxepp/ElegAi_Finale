@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { badRequest, notFound } from '../utils/apiError.js';
 import { requireFields } from '../utils/validators.js';
@@ -14,7 +15,12 @@ import {
   listOrdersForAdmin,
   setOrderStatus,
   searchCustomers,
+  findCustomerById,
 } from '../repositories/admin.repository.js';
+import {
+  createPasswordResetToken,
+  invalidatePasswordResetTokens,
+} from '../repositories/auth.repository.js';
 
 /** Admin endpoints are mounted behind authenticate + authorize('admin'). */
 
@@ -157,4 +163,27 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 export const listCustomers = asyncHandler(async (req, res) => {
   const rows = await searchCustomers(req.query.q);
   res.json({ customers: rows.map((row) => ({ ...row, total_spent: Number(row.total_spent) })) });
+});
+
+/**
+ * Issue a one-time password-reset code for a customer without sending email.
+ * The administrator shares the code directly; it expires in 15 minutes.
+ */
+export const issueCustomerResetCode = asyncHandler(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) throw badRequest('Invalid customer id.');
+
+  const customer = await findCustomerById(id);
+  if (!customer) throw notFound('Customer not found.');
+
+  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+  const codeHash = crypto.createHash('sha256').update(`${customer.user_id}:${code}`).digest('hex');
+  await invalidatePasswordResetTokens(customer.user_id);
+  await createPasswordResetToken(customer.user_id, codeHash);
+
+  res.json({
+    message: `Reset code generated for ${customer.name}. Share it with the customer.`,
+    code,
+    expiresInMinutes: 15,
+  });
 });

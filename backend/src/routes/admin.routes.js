@@ -11,6 +11,7 @@ import {
   listAllOrders,
   updateOrderStatus,
   listCustomers,
+  issueCustomerResetCode,
 } from '../controllers/admin.controller.js';
 import { listRequests, updateRequestStatus } from '../controllers/lookRequest.controller.js';
 
@@ -32,6 +33,7 @@ router.get('/orders', listAllOrders);
 router.put('/orders/:id/status', updateOrderStatus);
 
 router.get('/customers', listCustomers);
+router.post('/customers/:id/reset-code', issueCustomerResetCode);
 
 router.get('/look-requests', listRequests);
 router.put('/look-requests/:id/status', updateRequestStatus);

@@ -123,6 +123,14 @@ export const setOrderStatus = async (orderId, status) => {
   return rows.length > 0;
 };
 
+export const findCustomerById = async (userId) => {
+  const [rows] = await execute(
+    "SELECT user_id, name, email FROM users WHERE user_id = ? AND role = 'customer'",
+    [userId]
+  );
+  return rows[0] || null;
+};
+
 export const searchCustomers = async (q) => {
   const where = `WHERE u.role = 'customer'` + (q ? ' AND (u.name LIKE ? OR u.email LIKE ?)' : '');
   const params = q ? [`%${q}%`, `%${q}%`] : [];
