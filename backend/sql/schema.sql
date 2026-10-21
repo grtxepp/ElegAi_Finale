@@ -102,7 +102,9 @@ CREATE TABLE IF NOT EXISTS look_requests (
   measurements TEXT NULL,
   notes        TEXT NULL,
   status       ENUM('New','In Review','Fulfilled','Declined') NOT NULL DEFAULT 'New',
+  admin_note   TEXT NULL,
   created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_look_requests_status (status),
   INDEX idx_look_requests_user   (user_id),
   CONSTRAINT fk_look_request_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE

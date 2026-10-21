@@ -25,6 +25,7 @@ export default function AccountScreen({ navigation }) {
 
   const links = [
     { icon: 'cube-outline', label: 'My orders', onPress: () => navigation.navigate('Orders') },
+    { icon: 'clipboard-outline', label: 'My style requests', onPress: () => navigation.navigate('Requests') },
     { icon: 'person-outline', label: 'Profile & style preferences', onPress: () => navigation.navigate('Profile') },
     { icon: 'sparkles-outline', label: 'AI Stylist', onPress: () => navigation.navigate('Stylist') },
     { icon: 'bag-handle-outline', label: 'Shopping cart', onPress: () => navigation.navigate('Cart') },

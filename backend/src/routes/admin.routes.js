@@ -36,6 +36,7 @@ router.get('/customers', listCustomers);
 router.post('/customers/:id/reset-code', issueCustomerResetCode);
 
 router.get('/look-requests', listRequests);
+router.put('/look-requests/:id', updateRequestStatus);
 router.put('/look-requests/:id/status', updateRequestStatus);
 
 export default router;

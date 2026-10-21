@@ -430,9 +430,14 @@ export default function Stylist() {
                   )}
 
                   {requestDone && (
-                    <p className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-800">
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {requestDone}
-                    </p>
+                    <div className="space-y-1.5">
+                      <p className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-800">
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {requestDone}
+                      </p>
+                      <Link to="/requests" className="flex items-center gap-1 text-[11px] font-semibold text-gold-dark hover:underline">
+                        <ClipboardList className="h-3.5 w-3.5" /> Track this request
+                      </Link>
+                    </div>
                   )}
                 </figcaption>
               </figure>

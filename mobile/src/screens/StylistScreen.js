@@ -207,6 +207,9 @@ export default function StylistScreen({ navigation }) {
                 <View>
                   <Text style={styles.requestDoneTitle}>Request sent</Text>
                   <Text style={styles.requestHint}>The boutique has your look request and will reach out shortly.</Text>
+                  <Pressable onPress={() => navigation.navigate('Requests')} style={{ marginTop: 10 }}>
+                    <Text style={{ color: C.goldDark, fontWeight: '700', fontSize: 13 }}>Track this request</Text>
+                  </Pressable>
                 </View>
               ) : requestOpen ? (
                 <View>

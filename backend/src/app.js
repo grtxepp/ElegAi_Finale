@@ -15,6 +15,7 @@ import orderRoutes from './routes/order.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import stylistRoutes from './routes/stylist.routes.js';
 import chatbotRoutes from './routes/chatbot.routes.js';
+import lookRequestRoutes from './routes/lookRequest.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -53,6 +54,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stylist', stylistRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/look-requests', lookRequestRoutes);
 
 // ── Single-process mode: serve the built frontend (SPA fallback) ────
 // Set SERVE_FRONTEND=true to run API + UI from one Node process

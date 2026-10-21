@@ -30,6 +30,20 @@ async function ensureSingleAdmin(conn) {
   );
 }
 
+/** Add columns introduced after the first release to existing databases. */
+async function ensureLookRequestColumns(conn) {
+  const [columns] = await conn.query('SHOW COLUMNS FROM look_requests');
+  const names = new Set(columns.map((column) => column.Field));
+  if (!names.has('admin_note')) {
+    await conn.query('ALTER TABLE look_requests ADD COLUMN admin_note TEXT NULL AFTER status');
+  }
+  if (!names.has('updated_at')) {
+    await conn.query(
+      'ALTER TABLE look_requests ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at'
+    );
+  }
+}
+
 /**
  * Idempotent database bootstrap:
  *  1. Create the database if it does not exist.
@@ -74,6 +88,7 @@ export async function initDatabase() {
     console.log('[db] Seeded catalog + admin account.');
   }
 
+  await ensureLookRequestColumns(conn);
   await ensureSingleAdmin(conn);
 
   // Only seed sample orders on a brand-new database. Never attach demo orders

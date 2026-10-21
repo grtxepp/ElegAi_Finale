@@ -5,6 +5,10 @@ const styles = {
   Shipped: 'bg-cyan-100 text-cyan-800',
   Delivered: 'bg-emerald-100 text-emerald-800',
   Cancelled: 'bg-red-100 text-red-700',
+  New: 'bg-gold/15 text-gold-dark',
+  'In Review': 'bg-amber-100 text-amber-800',
+  Fulfilled: 'bg-emerald-100 text-emerald-800',
+  Declined: 'bg-red-100 text-red-700',
 };
 
 const dots = {
@@ -14,6 +18,10 @@ const dots = {
   Shipped: 'bg-cyan-500',
   Delivered: 'bg-emerald-500',
   Cancelled: 'bg-red-500',
+  New: 'bg-gold',
+  'In Review': 'bg-amber-500',
+  Fulfilled: 'bg-emerald-500',
+  Declined: 'bg-red-500',
 };
 
 export default function StatusBadge({ status }) {

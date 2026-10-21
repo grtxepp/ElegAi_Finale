@@ -231,6 +231,7 @@ sequenceDiagram
   reasoned products.
 - **Image generation** — prompts built from the chosen outfit, rendered by the ladder.
 - **Preference parsing** — free-text requests converted into structured preferences.
+- **Look handoff & tracking** — customers send a generated look to the boutique; the admin updates its status and posts a reply, which the customer sees on the My Requests page.
 
 ---
 

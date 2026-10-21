@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, ShoppingBag, Sparkles, Palette, ArrowRight } from 'lucide-react';
+import { Package, ShoppingBag, Sparkles, Palette, ArrowRight, ClipboardList } from 'lucide-react';
 import api, { errMsg } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
@@ -46,6 +46,9 @@ export default function Dashboard() {
         </Link>
         <Link to="/catalog" className="btn-outline">
           Browse the collection <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link to="/requests" className="btn-outline">
+          <ClipboardList className="h-4 w-4" /> My requests
         </Link>
         <Link to="/profile" className="btn-ghost text-sm">
           Edit style profile

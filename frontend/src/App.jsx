@@ -22,6 +22,7 @@ import CartPage from './pages/CartPage.jsx';
 import Checkout from './pages/Checkout.jsx';
 import Orders from './pages/Orders.jsx';
 import OrderDetails from './pages/OrderDetails.jsx';
+import MyRequests from './pages/MyRequests.jsx';
 
 // Admin pages
 import AdminLogin from './pages/admin/AdminLogin.jsx';
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetails />} />
+          <Route path="/requests" element={<MyRequests />} />
         </Route>
       </Route>
 

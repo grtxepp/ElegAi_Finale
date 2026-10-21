@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingBag, User, Menu, X, LogOut, Sparkles, LayoutDashboard } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, LogOut, Sparkles, LayoutDashboard, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 
@@ -35,6 +35,11 @@ export default function Navbar() {
       {user && (
         <NavLink to="/orders" className={navLinkClass} onClick={() => setOpen(false)}>
           Orders
+        </NavLink>
+      )}
+      {user && (
+        <NavLink to="/requests" className={navLinkClass} onClick={() => setOpen(false)}>
+          Requests
         </NavLink>
       )}
     </>
@@ -111,6 +116,9 @@ export default function Navbar() {
               <>
                 <Link to="/dashboard" onClick={() => setOpen(false)} className="btn-outline w-full">
                   <LayoutDashboard className="h-4 w-4" /> My Dashboard
+                </Link>
+                <Link to="/requests" onClick={() => setOpen(false)} className="btn-outline w-full">
+                  <ClipboardList className="h-4 w-4" /> My Requests
                 </Link>
                 <Link to="/stylist" onClick={() => setOpen(false)} className="btn-outline w-full">
                   <Sparkles className="h-4 w-4" /> AI Assistant

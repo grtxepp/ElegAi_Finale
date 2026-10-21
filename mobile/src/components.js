@@ -192,6 +192,10 @@ const STATUS_STYLES = {
   Shipped: { bg: '#CFFAFE', fg: '#0E7490' },
   Delivered: { bg: '#D1FAE5', fg: '#059669' },
   Cancelled: { bg: '#FEE2E2', fg: '#B91C1C' },
+  New: { bg: 'rgba(201,162,39,0.15)', fg: '#8A6D1D' },
+  'In Review': { bg: '#FEF3C7', fg: '#B45309' },
+  Fulfilled: { bg: '#D1FAE5', fg: '#059669' },
+  Declined: { bg: '#FEE2E2', fg: '#B91C1C' },
 };
 export function StatusBadge({ status }) {
   const s = STATUS_STYLES[status] || { bg: '#F3F4F6', fg: '#374151' };

@@ -205,6 +205,7 @@ Elegant Ivory A-Line Wedding Gown
 | Checkout (COD / GCash / Card demo) | `/checkout` |
 | Order history + filters | `/orders` |
 | Order tracking timeline + cancel pending orders | `/orders/:id` |
+| Style request tracking + boutique replies | `/requests` |
 | Customer dashboard | `/dashboard` |
 
 ## Admin features
@@ -216,7 +217,8 @@ Elegant Ivory A-Line Wedding Gown
 | Product management (CRUD + image upload) | `/admin/products`, `/admin/products/new`, `/admin/products/:id/edit` |
 | Inventory management (set/adjust stock, low-stock indicators) | `/admin/inventory` |
 | Order management (status changes through fulfilment) | `/admin/orders` |
-| Customer management (spend summaries) | `/admin/customers` |
+| Style requests (status + message to the customer) | `/admin/requests` |
+| Customer management (spend summaries + password reset codes) | `/admin/customers` |
 
 ---
 
@@ -242,6 +244,10 @@ Elegant Ivory A-Line Wedding Gown
 | GET | `/api/orders/:id` | user | Order detail |
 | POST | `/api/orders/:id/cancel` | user | Cancel pending order (restocks) |
 | POST | `/api/stylist/recommend` | public* | AI recommendations (multipart, optional photo) |
+| GET | `/api/look-requests` | user | Signed-in customer's style requests + updates |
+| POST | `/api/chatbot/look-request` | user | Send a generated look to the boutique |
+| GET | `/api/admin/look-requests` | admin | All customer style requests |
+| PUT | `/api/admin/look-requests/:id` | admin | Update request status and/or reply |
 | GET | `/api/admin/stats` | admin | Dashboard metrics & sales statistics |
 | GET/POST/PUT/DELETE | `/api/admin/products` | admin | Product management |
 | PUT | `/api/admin/inventory/:id` | admin | Set or adjust stock |

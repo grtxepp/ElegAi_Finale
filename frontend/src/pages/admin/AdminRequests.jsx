@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Mail, Ruler, MessageSquare, ImageIcon } from 'lucide-react';
+import { Mail, Ruler, MessageSquare, ImageIcon, Send, Check } from 'lucide-react';
 import api, { errMsg } from '../../api/client.js';
 import { formatDate } from '../../utils/format.js';
 import Spinner from '../../components/Spinner.jsx';
@@ -20,13 +20,20 @@ export default function AdminRequests() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(null);
+  const [noteDrafts, setNoteDrafts] = useState({});
+  const [savingNote, setSavingNote] = useState(null);
+  const [savedNote, setSavedNote] = useState(null);
+  const [noteErrors, setNoteErrors] = useState({});
 
   const load = () => {
     setLoading(true);
     setError('');
     api
       .get('/admin/look-requests', { params: filter === 'All' ? {} : { status: filter } })
-      .then(({ data }) => setRequests(data.requests))
+      .then(({ data }) => {
+        setRequests(data.requests);
+        setNoteDrafts(Object.fromEntries(data.requests.map((r) => [r.request_id, r.admin_note || ''])));
+      })
       .catch((e) => setError(errMsg(e)))
       .finally(() => setLoading(false));
   };
@@ -36,12 +43,33 @@ export default function AdminRequests() {
   const updateStatus = async (id, status) => {
     setUpdating(id);
     try {
-      await api.put(`/admin/look-requests/${id}/status`, { status });
+      await api.put(`/admin/look-requests/${id}`, { status });
       setRequests((prev) => prev.map((r) => (r.request_id === id ? { ...r, status } : r)));
     } catch (e) {
       setError(errMsg(e));
     } finally {
       setUpdating(null);
+    }
+  };
+
+  const saveNote = async (id) => {
+    const note = (noteDrafts[id] ?? '').trim();
+    setSavingNote(id);
+    setNoteErrors((prev) => ({ ...prev, [id]: '' }));
+    try {
+      await api.put(`/admin/look-requests/${id}`, { adminNote: note });
+      setRequests((prev) =>
+        prev.map((r) =>
+          r.request_id === id ? { ...r, admin_note: note || null, updated_at: new Date().toISOString() } : r
+        )
+      );
+      setNoteDrafts((prev) => ({ ...prev, [id]: note }));
+      setSavedNote(id);
+      setTimeout(() => setSavedNote((value) => (value === id ? null : value)), 2000);
+    } catch (e) {
+      setNoteErrors((prev) => ({ ...prev, [id]: errMsg(e) }));
+    } finally {
+      setSavingNote(null);
     }
   };
 
@@ -133,6 +161,48 @@ export default function AdminRequests() {
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
+              </div>
+
+              <div className="border-t border-charcoal/10 pt-3">
+                <label className="text-xs font-medium text-gray" htmlFor={`note-${r.request_id}`}>
+                  Message to customer
+                </label>
+                <textarea
+                  id={`note-${r.request_id}`}
+                  rows={2}
+                  maxLength={2000}
+                  className="input mt-1.5 w-full !py-2 text-xs"
+                  placeholder="Share progress or ask for details…"
+                  value={noteDrafts[r.request_id] ?? ''}
+                  onChange={(e) =>
+                    setNoteDrafts((prev) => ({ ...prev, [r.request_id]: e.target.value }))
+                  }
+                />
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-[11px] text-gray-light">
+                    The customer sees this on their My Requests page.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => saveNote(r.request_id)}
+                    className="btn-outline !px-3 !py-1.5 text-[11px]"
+                    disabled={
+                      savingNote === r.request_id ||
+                      (noteDrafts[r.request_id] ?? '') === (r.admin_note ?? '')
+                    }
+                  >
+                    {savingNote === r.request_id ? (
+                      'Saving…'
+                    ) : savedNote === r.request_id ? (
+                      <><Check className="h-3.5 w-3.5" /> Saved</>
+                    ) : (
+                      <><Send className="h-3.5 w-3.5" /> Save reply</>
+                    )}
+                  </button>
+                </div>
+                {noteErrors[r.request_id] && (
+                  <p className="mt-1 text-[11px] text-red-600">{noteErrors[r.request_id]}</p>
+                )}
               </div>
             </article>
           ))}
