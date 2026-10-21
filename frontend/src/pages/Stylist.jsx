@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Send, ImagePlus, Loader2, RotateCcw, Sparkle, User, ArrowRight } from 'lucide-react';
+import {
+  Sparkles, Send, ImagePlus, Loader2, RotateCcw, Sparkle, User, ArrowRight,
+  ClipboardList, CheckCircle2,
+} from 'lucide-react';
 import api, { errMsg } from '../api/client.js';
 import { OCCASIONS, STYLES, COLORS, FITS } from '../utils/options.js';
 
@@ -32,9 +35,14 @@ export default function Stylist() {
 
   const [brief, setBrief] = useState({ occasion: '', style: '', color: '', fit: '' });
   const [image, setImage] = useState(null);
-  const [imageNotice, setImageNotice] = useState('');
   const [imaging, setImaging] = useState(false);
   const [imageError, setImageError] = useState('');
+
+  const [requestOpen, setRequestOpen] = useState(false);
+  const [requestForm, setRequestForm] = useState({ sizing: '', measurements: '', notes: '' });
+  const [requesting, setRequesting] = useState(false);
+  const [requestError, setRequestError] = useState('');
+  const [requestDone, setRequestDone] = useState('');
 
   const threadRef = useRef(null);
   const inputRef = useRef(null);
@@ -85,7 +93,9 @@ export default function Stylist() {
 
     setImaging(true);
     setImageError('');
-    setImageNotice('');
+    setRequestOpen(false);
+    setRequestDone('');
+    setRequestError('');
 
     try {
       const { data } = await api.post(
@@ -99,7 +109,6 @@ export default function Stylist() {
         source: data.source,
         request,
       });
-      setImageNotice(data.notice || '');
       if (!messages.some((m) => m.role === 'user')) {
         setMessages((prev) => [...prev, { role: 'user', content: request }]);
       }
@@ -116,6 +125,29 @@ export default function Stylist() {
       setImaging(false);
     }
   }, [brief, draft, imaging, messages]);
+
+  const submitRequest = useCallback(async () => {
+    if (!image || requesting) return;
+    setRequesting(true);
+    setRequestError('');
+    try {
+      await api.post('/chatbot/look-request', {
+        prompt: image.prompt,
+        source: image.source,
+        image: image.src,
+        sizing: requestForm.sizing,
+        measurements: requestForm.measurements,
+        notes: requestForm.notes,
+      });
+      setRequestDone('Your request was sent to the boutique. We will contact you shortly.');
+      setRequestOpen(false);
+      setRequestForm({ sizing: '', measurements: '', notes: '' });
+    } catch (err) {
+      setRequestError(errMsg(err, 'Could not send your request. Please try again.'));
+    } finally {
+      setRequesting(false);
+    }
+  }, [image, requesting, requestForm]);
 
   const toggle = (key, value) =>
     setBrief((prev) => ({ ...prev, [key]: prev[key] === value ? '' : value }));
@@ -326,16 +358,8 @@ export default function Stylist() {
                   alt="AI-generated ElegAI outfit concept"
                   className="aspect-square w-full rounded-xl object-cover shadow-card"
                 />
-                <figcaption className="space-y-1.5">
+                <figcaption className="space-y-2">
                   <p className="text-[11px] leading-relaxed text-gray">{image.prompt}</p>
-                  <p className="text-[10px] uppercase tracking-wider text-gray-light">
-                    Rendered by {image.source}
-                  </p>
-                  {imageNotice && (
-                    <p className="rounded-lg border border-gold/30 bg-gold/10 px-2.5 py-2 text-[11px] leading-relaxed text-charcoal">
-                      {imageNotice}
-                    </p>
-                  )}
                   <Link
                     to={`/catalog?category=${encodeURIComponent(
                       brief.occasion === 'Wedding' ? 'Bridal Gowns' : 'Formal Dresses'
@@ -344,6 +368,72 @@ export default function Stylist() {
                   >
                     Browse this look <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => setRequestOpen((v) => !v)}
+                    className="btn-gold w-full !py-2 text-xs"
+                  >
+                    <ClipboardList className="h-3.5 w-3.5" /> Request this look
+                  </button>
+
+                  {requestOpen && (
+                    <div className="space-y-2 rounded-xl border border-charcoal/10 bg-ivory-dark/40 p-3">
+                      <div>
+                        <label className="label" htmlFor="req-sizing">Size</label>
+                        <input
+                          id="req-sizing"
+                          className="input"
+                          placeholder="e.g. M, or custom"
+                          value={requestForm.sizing}
+                          onChange={(e) => setRequestForm({ ...requestForm, sizing: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="label" htmlFor="req-measurements">Measurements</label>
+                        <textarea
+                          id="req-measurements"
+                          className="input min-h-[64px] py-2"
+                          placeholder="Bust, waist, hips, height…"
+                          value={requestForm.measurements}
+                          onChange={(e) => setRequestForm({ ...requestForm, measurements: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="label" htmlFor="req-notes">Anything else?</label>
+                        <textarea
+                          id="req-notes"
+                          className="input min-h-[64px] py-2"
+                          placeholder="Event date, fabric preference, questions…"
+                          value={requestForm.notes}
+                          onChange={(e) => setRequestForm({ ...requestForm, notes: e.target.value })}
+                        />
+                      </div>
+                      {requestError && (
+                        <p className="rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-[11px] text-red-700" role="alert">
+                          {requestError}
+                        </p>
+                      )}
+                      <button
+                        type="button"
+                        onClick={submitRequest}
+                        disabled={requesting}
+                        className="btn-dark w-full !py-2 text-xs"
+                      >
+                        {requesting ? (
+                          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending…</>
+                        ) : (
+                          'Send request to boutique'
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  {requestDone && (
+                    <p className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-800">
+                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {requestDone}
+                    </p>
+                  )}
                 </figcaption>
               </figure>
             )}

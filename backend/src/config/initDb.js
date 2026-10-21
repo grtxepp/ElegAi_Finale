@@ -10,6 +10,26 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SQL_DIR = path.resolve(__dirname, '../../sql');
 const SSL = TLS;
 
+// The single administrator account. Customers register their own accounts.
+const ADMIN_NAME = 'ElegaiAdmin';
+const ADMIN_EMAIL = 'elegaiadmin@elegai.com';
+// bcrypt hash of "Admin@123x"
+const ADMIN_PASSWORD_HASH = '$2a$10$AdI6PeOa/soaeZdOHa4Dp.2DDfSdzCLYpy5QB/7YrozJz9fGlnBsa';
+
+/** Remove legacy demo accounts and guarantee exactly one administrator. */
+async function ensureSingleAdmin(conn) {
+  await conn.query(
+    `DELETE FROM users WHERE email IN
+       ('admin@elegai.com','maria@example.com','juan@example.com','ana@example.com')`
+  );
+  await conn.query("DELETE FROM users WHERE role = 'admin' AND email <> ?", [ADMIN_EMAIL]);
+  await conn.query(
+    `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')
+     ON DUPLICATE KEY UPDATE name = VALUES(name), password = VALUES(password), role = 'admin'`,
+    [ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD_HASH]
+  );
+}
+
 /**
  * Idempotent database bootstrap:
  *  1. Create the database if it does not exist.
@@ -47,16 +67,23 @@ export async function initDatabase() {
   await conn.query(schema);
 
   const [[{ productCount }]] = await conn.query('SELECT COUNT(*) AS productCount FROM products');
-  if (productCount === 0) {
+  const isFreshDatabase = productCount === 0;
+  if (isFreshDatabase) {
     const seed = await fs.readFile(path.join(SQL_DIR, 'seed.sql'), 'utf8');
     await conn.query(seed);
-    console.log('[db] Seeded catalog + demo users.');
+    console.log('[db] Seeded catalog + admin account.');
   }
 
-  const [[{ orderCount }]] = await conn.query('SELECT COUNT(*) AS orderCount FROM orders');
-  if (orderCount === 0) {
-    await seedSampleOrders(conn);
-    console.log('[db] Seeded sample orders for the admin dashboard.');
+  await ensureSingleAdmin(conn);
+
+  // Only seed sample orders on a brand-new database. Never attach demo orders
+  // to real customer accounts on an existing database.
+  if (isFreshDatabase) {
+    const [[{ orderCount }]] = await conn.query('SELECT COUNT(*) AS orderCount FROM orders');
+    if (orderCount === 0) {
+      await seedSampleOrders(conn);
+      console.log('[db] Seeded sample orders for the admin dashboard.');
+    }
   }
 
   await conn.end();

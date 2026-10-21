@@ -44,7 +44,7 @@ export default function ForgotPassword() {
           <p className="eyebrow">Recover access</p>
           <h1 className="mt-2 font-display text-3xl font-semibold text-charcoal">Reset password</h1>
           <p className="mt-2 text-sm text-gray">
-            Enter the email on your account and we will generate a one-time reset link.
+            Enter the email on your account and we will email you a one-time reset link.
           </p>
 
           {error && (
@@ -62,7 +62,7 @@ export default function ForgotPassword() {
               {done.resetUrl && (
                 <div className="mt-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-gray">
-                    Demo mode — no mail server, so here is your link
+                    Development link (no mail server configured)
                   </p>
                   <Link
                     to={done.resetUrl.replace(/^https?:\/\/[^/]+/, '')}
@@ -91,7 +91,7 @@ export default function ForgotPassword() {
               </div>
               <Captcha onTokenChange={setCaptchaToken} onRequiredChange={setCaptchaRequired} resetKey={captchaResetKey} />
               <button type="submit" className="btn-gold w-full" disabled={loading}>
-                {loading ? 'Generating link…' : 'Generate reset link'}
+                {loading ? 'Sending link…' : 'Send reset link'}
               </button>
               <Link to="/login" className="block text-center text-sm font-semibold text-charcoal hover:underline">
                 ← Back to sign in

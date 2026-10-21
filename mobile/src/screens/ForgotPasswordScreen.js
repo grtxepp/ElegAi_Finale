@@ -38,7 +38,7 @@ export default function ForgotPasswordScreen({ navigation }) {
         {error ? <ErrorBox message={error} /> : null}
         {link ? (
           <View style={styles.linkBox}>
-            <Text style={styles.linkTitle}>Demo mode — no mail server, here is your reset link:</Text>
+            <Text style={styles.linkTitle}>Development link (no mail server configured):</Text>
             <Text style={styles.linkText}>{link}</Text>
             <PrimaryButton
               title="Open reset link in browser"

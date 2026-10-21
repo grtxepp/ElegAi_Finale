@@ -80,6 +80,17 @@ export const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase() || (() 
   return 'local';
 })();
 
+// ── Email (password reset) ─────────────────────────────────────────
+// Public base URL used in reset links (e.g. https://your-app.b4a.run).
+export const APP_URL = String(process.env.APP_URL || '').replace(/\/+$/, '');
+export const SMTP_HOST = process.env.SMTP_HOST || '';
+export const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
+export const SMTP_SECURE = (process.env.SMTP_SECURE || 'false') === 'true';
+export const SMTP_USER = process.env.SMTP_USER || '';
+export const SMTP_PASS = process.env.SMTP_PASS || '';
+export const MAIL_FROM = process.env.MAIL_FROM || (SMTP_USER ? `ElegAI <${SMTP_USER}>` : 'ElegAI <no-reply@elegai.com>');
+export const MAIL_CONFIGURED = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+
 export const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 export const MAX_UPLOAD_MB = Number(process.env.MAX_UPLOAD_MB) || 5;
 

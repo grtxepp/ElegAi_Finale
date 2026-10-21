@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { errMsg } from '../api/client.js';
 import Captcha from '../components/Captcha.jsx';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function Register() {
   const { register } = useAuth();
@@ -91,10 +92,9 @@ export default function Register() {
             </div>
             <div>
               <label className="label" htmlFor="password">Password</label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
-                className="input"
+                autoComplete="new-password"
                 placeholder="8+ characters, letters & numbers"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -102,10 +102,9 @@ export default function Register() {
             </div>
             <div>
               <label className="label" htmlFor="confirm">Confirm password</label>
-              <input
+              <PasswordInput
                 id="confirm"
-                type="password"
-                className="input"
+                autoComplete="new-password"
                 placeholder="Repeat your password"
                 value={form.confirm}
                 onChange={(e) => setForm({ ...form, confirm: e.target.value })}

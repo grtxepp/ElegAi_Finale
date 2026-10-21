@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net" agent="ElegAI" version="24.0.0">
+  <diagram id="elegai-arch" name="ElegAI High-Level Architecture">
+    <mxGraphModel dx="1500" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="ElegAI — High-Level System Architecture" style="text;html=1;align=center;fontSize=20;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="450" y="15" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="clientsLbl" value="CLIENTS" style="text;html=1;align=left;fontSize=12;fontStyle=1;fontColor=#6C8EBF;" vertex="1" parent="1">
+          <mxGeometry x="150" y="52" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="Web App&#10;(React 18 · Vite · PWA)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="150" y="80" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="Admin Console&#10;(React)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="420" y="80" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Mobile App&#10;(React Native · Expo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="670" y="80" width="230" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="turnstile" value="Cloudflare&#10;Turnstile&#10;(bot check)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="20" y="340" width="110" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="backend" value="Express REST API (Node.js)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#F7F7F7;strokeColor=#666666;dashed=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="150" y="210" width="760" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="mw" value="Middleware — JWT auth · CAPTCHA · rate limit · Helmet / CORS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="180" y="265" width="700" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="ctl" value="Controllers — request validation &amp; response shaping" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="180" y="335" width="700" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="svc" value="Services — AI Service · Recommendation Engine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="180" y="400" width="700" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="rep" value="Repositories — feature-scoped SQL / persistence" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="180" y="465" width="700" height="42" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai" value="AI Provider Fallback Chain" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#FFF8E1;strokeColor=#D6B656;dashed=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="990" y="210" width="260" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="ai1" value="Gemini (text + image)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="265" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ai2" value="OpenAI (text + image)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="325" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ai3" value="Pollinations (Flux · free)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="385" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ai4" value="Stable Horde (free)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="445" width="220" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="ai5" value="Local Style Engine (offline)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="505" width="220" height="42" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db" value="TiDB Cloud Serverless&#10;(MySQL-compatible)" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="660" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="store" value="Media Storage&#10;(product images · uploaded photos)" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="660" width="280" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="host" value="Deployment: a single Docker container on Back4app Containers — the API also serves the built web app (SERVE_FRONTEND=true), so one URL serves UI + API." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=14;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="800" width="660" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="HTTPS · REST · JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="c1" target="mw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#6C8EBF;" edge="1" parent="1" source="c2" target="mw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#6C8EBF;" edge="1" parent="1" source="c3" target="mw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" value="verify token" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;endArrow=block;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="mw" target="turnstile">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" value="prompt → validated JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#D6B656;fontSize=11;" edge="1" parent="1" source="svc" target="ai">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" value="SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#D79B00;fontSize=11;" edge="1" parent="1" source="rep" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" value="upload / serve media" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeColor=#9673A6;fontSize=11;" edge="1" parent="1" source="ctl" target="store">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

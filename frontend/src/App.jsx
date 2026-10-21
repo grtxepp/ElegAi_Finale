@@ -30,6 +30,7 @@ import AdminProducts from './pages/admin/AdminProducts.jsx';
 import AdminProductForm from './pages/admin/AdminProductForm.jsx';
 import AdminInventory from './pages/admin/AdminInventory.jsx';
 import AdminOrders from './pages/admin/AdminOrders.jsx';
+import AdminRequests from './pages/admin/AdminRequests.jsx';
 import AdminCustomers from './pages/admin/AdminCustomers.jsx';
 
 export default function App() {
@@ -72,6 +73,7 @@ export default function App() {
         <Route path="products/:id/edit" element={<AdminProductForm />} />
         <Route path="inventory" element={<AdminInventory />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="requests" element={<AdminRequests />} />
         <Route path="customers" element={<AdminCustomers />} />
       </Route>
 

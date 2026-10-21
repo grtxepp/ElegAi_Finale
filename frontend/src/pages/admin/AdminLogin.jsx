@@ -4,6 +4,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { errMsg } from '../../api/client.js';
 import Captcha from '../../components/Captcha.jsx';
+import PasswordInput from '../../components/PasswordInput.jsx';
 
 export default function AdminLogin() {
   const { login } = useAuth();
@@ -24,7 +25,10 @@ export default function AdminLogin() {
     }
     setLoading(true);
     try {
-      const user = await login(form.email, form.password, captchaToken);
+      const identifier = form.email.includes('@')
+        ? form.email.trim()
+        : `${form.email.trim()}@elegai.com`;
+      const user = await login(identifier, form.password, captchaToken);
       if (user.role !== 'admin') {
         setError('This area is for administrators only.');
         return;
@@ -60,22 +64,22 @@ export default function AdminLogin() {
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="label" htmlFor="admin-email">Email</label>
+              <label className="label" htmlFor="admin-email">Username or email</label>
               <input
                 id="admin-email"
-                type="email"
+                type="text"
+                autoComplete="username"
                 className="input"
-                placeholder="admin@elegai.com"
+                placeholder="ElegaiAdmin"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
             <div>
               <label className="label" htmlFor="admin-password">Password</label>
-              <input
+              <PasswordInput
                 id="admin-password"
-                type="password"
-                className="input"
+                autoComplete="current-password"
                 placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -87,9 +91,6 @@ export default function AdminLogin() {
               {loading ? 'Signing in…' : 'Sign in to admin'}
             </button>
           </form>
-          <p className="mt-4 text-center text-xs text-gray-light">
-            Demo: admin@elegai.com / Admin@12345
-          </p>
         </div>
 
         <p className="mt-6 text-center">

@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import api, { errMsg } from '../api/client.js';
 import Captcha from '../components/Captcha.jsx';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -70,10 +71,9 @@ export default function ResetPassword() {
             <form onSubmit={handleSubmit} className="mt-6 space-y-5">
               <div>
                 <label className="label" htmlFor="password">New password</label>
-                <input
+                <PasswordInput
                   id="password"
-                  type="password"
-                  className="input"
+                  autoComplete="new-password"
                   placeholder="8+ characters, letters & numbers"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -81,10 +81,9 @@ export default function ResetPassword() {
               </div>
               <div>
                 <label className="label" htmlFor="confirm">Confirm new password</label>
-                <input
+                <PasswordInput
                   id="confirm"
-                  type="password"
-                  className="input"
+                  autoComplete="new-password"
                   placeholder="Repeat new password"
                   value={form.confirm}
                   onChange={(e) => setForm({ ...form, confirm: e.target.value })}

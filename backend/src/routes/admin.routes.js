@@ -12,6 +12,7 @@ import {
   updateOrderStatus,
   listCustomers,
 } from '../controllers/admin.controller.js';
+import { listRequests, updateRequestStatus } from '../controllers/lookRequest.controller.js';
 
 const router = Router();
 
@@ -31,5 +32,8 @@ router.get('/orders', listAllOrders);
 router.put('/orders/:id/status', updateOrderStatus);
 
 router.get('/customers', listCustomers);
+
+router.get('/look-requests', listRequests);
+router.put('/look-requests/:id/status', updateRequestStatus);
 
 export default router;

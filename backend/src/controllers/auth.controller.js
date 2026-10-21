@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { CAPTCHA_ENABLED, TURNSTILE_SITE_KEY } from '../config/env.js';
+import { CAPTCHA_ENABLED, TURNSTILE_SITE_KEY, APP_URL } from '../config/env.js';
+import { sendPasswordResetEmail } from '../services/mail.service.js';
 import {
   createCustomerAccount,
   findUserByEmail,
@@ -63,8 +64,9 @@ export const me = asyncHandler(async (req, res) => {
 
 /**
  * POST /api/auth/forgot-password
- * Creates a single-use, hashed reset token. In development the reset link is
- * returned because the demo has no mail provider configured.
+ * Creates a single-use, hashed reset token and emails the link. When no SMTP
+ * credentials are configured the link is returned in the response (development
+ * only) so the flow can still be tested without a mail server.
  */
 export const forgotPassword = asyncHandler(async (req, res) => {
   requireFields(req.body, ['email']);
@@ -76,13 +78,27 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     const token = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     await createPasswordResetToken(userId, tokenHash);
-    if (process.env.NODE_ENV !== 'production') {
+
+    const user = await findUserById(userId);
+    const base = APP_URL || `${req.protocol}://${req.get('host')}`;
+    const resetUrl = `${base}/reset-password/${token}`;
+
+    let emailed = false;
+    try {
+      const result = await sendPasswordResetEmail({ to: email, name: user?.name, resetUrl });
+      emailed = result.sent;
+    } catch (error) {
+      console.error('[mail] Could not send reset email:', error.message);
+    }
+
+    if (!emailed && process.env.NODE_ENV !== 'production') {
       return res.json({
-        message: 'A password reset link has been generated.',
-        resetUrl: `${req.protocol}://${req.get('host')}/reset-password/${token}`,
+        message: 'No mail server is configured, so here is your reset link.',
+        resetUrl,
       });
     }
   }
+
   // Keep the same response whether or not the email exists.
   res.json({ message: 'If an account exists for that email, a reset link has been sent.' });
 });

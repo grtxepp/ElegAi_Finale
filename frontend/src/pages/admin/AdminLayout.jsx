@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, PlusCircle, Boxes, ShoppingCart, Users, LogOut, Store, Menu, X,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 
@@ -11,6 +12,7 @@ const links = [
   { to: '/admin/products/new', label: 'Add product', icon: PlusCircle, end: false },
   { to: '/admin/inventory', label: 'Inventory', icon: Boxes, end: false },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart, end: false },
+  { to: '/admin/requests', label: 'Requests', icon: ClipboardList, end: false },
   { to: '/admin/customers', label: 'Customers', icon: Users, end: false },
 ];
 

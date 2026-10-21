@@ -5,11 +5,8 @@ customers discover bridal gowns, evening gowns, formal dresses, suits, barongs a
 and its signature feature is an **AI formal-wear recommendation engine** that recommends real
 products from the catalog based on occasion, style, color, fit, measurements and an optional photo.
 
-> **Demo accounts**
-> | Role | Email | Password |
-> |---|---|---|
-> | Customer | `maria@example.com` | `Customer@123` |
-> | Administrator | `admin@elegai.com` | `Admin@12345` |
+> **Administrator:** sign in at `/admin/login` with username `ElegaiAdmin` and password `Admin@123x`.
+> Customers create their own accounts from the storefront — there are no demo customer logins.
 
 ---
 
@@ -305,5 +302,6 @@ Order statuses: `Pending → Confirmed → Processing → Shipped → Delivered`
 - Product photos are static assets served from `backend/public/images`; admins can upload photos per product
   through the admin console (validated uploads stored under `backend/uploads`). The current Gemini integration
   handles stylist recommendations and optional photo analysis; it does **not** generate images at runtime.
-- The demo password reset returns the link in the API response because no mail server is wired up;
-  in production, send the link by email instead.
+- Password reset emails are sent over SMTP. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
+  `SMTP_PASS`, `MAIL_FROM` and `APP_URL` in `backend/.env`. If SMTP is not configured, the reset
+  link is returned in the API response in development only.

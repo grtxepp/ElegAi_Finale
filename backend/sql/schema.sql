@@ -89,3 +89,20 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_reset_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Look requests — an AI-generated look a customer sends to the boutique ----
+CREATE TABLE IF NOT EXISTS look_requests (
+  request_id   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id      INT UNSIGNED NOT NULL,
+  prompt       TEXT NULL,
+  image_data   MEDIUMTEXT NULL,            -- data URL of the generated look
+  image_source VARCHAR(120) NULL,
+  sizing       VARCHAR(120) NULL,
+  measurements TEXT NULL,
+  notes        TEXT NULL,
+  status       ENUM('New','In Review','Fulfilled','Declined') NOT NULL DEFAULT 'New',
+  created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_look_requests_status (status),
+  INDEX idx_look_requests_user   (user_id),
+  CONSTRAINT fk_look_request_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;

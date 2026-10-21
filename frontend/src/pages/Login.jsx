@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { errMsg } from '../api/client.js';
 import Captcha from '../components/Captcha.jsx';
+import PasswordInput from '../components/PasswordInput.jsx';
 
 export default function Login() {
   const { login } = useAuth();
@@ -80,11 +81,9 @@ export default function Login() {
                   Forgot password?
                 </Link>
               </div>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="current-password"
-                className="input"
                 placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -95,14 +94,6 @@ export default function Login() {
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
-
-          <div className="mt-6 rounded-xl bg-ivory-dark/60 p-4 text-xs leading-relaxed text-gray">
-            <strong className="text-charcoal">Demo accounts</strong>
-            <br />
-            Customer — maria@example.com / Customer@123
-            <br />
-            Administrator — admin@elegai.com / Admin@12345
-          </div>
         </div>
       </div>
     </div>

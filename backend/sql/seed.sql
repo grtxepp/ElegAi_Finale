@@ -2,23 +2,12 @@
 -- ElegAI Seed Data — realistic sample catalog, demo users and profiles
 -- ============================================================================
 
--- Demo users ----------------------------------------------------------------
--- Passwords are bcrypt-hashed. Defaults:
---   admin@elegai.com   / Admin@12345   (Administrator)
---   maria@example.com  / Customer@123  (Customer)
---   juan@example.com   / Customer@123  (Customer)
---   ana@example.com    / Customer@123  (Customer)
+-- Single administrator account ----------------------------------------------
+-- Customers create their own accounts through the storefront.
+-- The admin signs in at /admin/login with:
+--   ElegaiAdmin / Admin@123x
 INSERT INTO users (name, email, password, role) VALUES
-('ElegAI Admin', 'admin@elegai.com', '$2a$10$M0eA0uQEa95hFutW74SSVulLcwmNgkmNsZefC/7aW4SUjFuJkm.4a', 'admin'),
-('Maria Santos', 'maria@example.com', '$2a$10$uUVDhcGPJIcFPsyuaNjl3uFoYBBCcIPTGeNvz3QpCCCY6dxL.tykG', 'customer'),
-('Juan Dela Cruz', 'juan@example.com', '$2a$10$uUVDhcGPJIcFPsyuaNjl3uFoYBBCcIPTGeNvz3QpCCCY6dxL.tykG', 'customer'),
-('Ana Reyes', 'ana@example.com', '$2a$10$uUVDhcGPJIcFPsyuaNjl3uFoYBBCcIPTGeNvz3QpCCCY6dxL.tykG', 'customer');
-
--- Customer profiles (measurements + style preferences) ----------------------
-INSERT INTO customer_profiles (user_id, height_cm, measurements, preferred_style, preferred_color, preferred_fit) VALUES
-(2, 165, '{"bust":88,"waist":66,"hips":92,"shoulder":40}', 'Elegant', 'Ivory', 'A-Line'),
-(3, 175, '{"chest":96,"waist":82,"shoulder":46}', 'Classic', 'Charcoal', 'Tailored'),
-(4, 158, '{"bust":84,"waist":64,"hips":90,"shoulder":38}', 'Romantic', 'Pink', 'Fit & Flare');
+('ElegaiAdmin', 'elegaiadmin@elegai.com', '$2a$10$AdI6PeOa/soaeZdOHa4Dp.2DDfSdzCLYpy5QB/7YrozJz9fGlnBsa', 'admin');
 
 -- Products ------------------------------------------------------------------
 INSERT INTO products (name, description, price, category, color, available_sizes, stock, image_url) VALUES
