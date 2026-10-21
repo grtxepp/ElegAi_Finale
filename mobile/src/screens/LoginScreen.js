@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { Screen, Field, PrimaryButton, GhostButton, ErrorBox, Title } from '../components';
+import { Screen, Field, PasswordField, PrimaryButton, GhostButton, ErrorBox, Title } from '../components';
 import { useAuth } from '../context/AuthContext';
 import { errMsg } from '../api';
 import { C, DISPLAY } from '../theme';
@@ -54,12 +54,11 @@ export default function LoginScreen({ navigation }) {
             autoCapitalize="none"
             keyboardType="email-address"
           />
-          <Field
+          <PasswordField
             label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="••••••••"
-            secureTextEntry
+            placeholder="Enter your password"
           />
           <PrimaryButton title="Sign in" onPress={submit} loading={loading} />
           <GhostButton title="Forgot password?" onPress={() => navigation.navigate('Forgot')} />
@@ -68,7 +67,6 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.footer}>
           <Text style={styles.footerText}>New to ElegAI?</Text>
           <GhostButton title="Create an account" onPress={() => navigation.navigate('Register')} />
-          <Text style={styles.demo}>Demo: maria@example.com / Customer@123</Text>
         </View>
       </KeyboardAvoidingView>
     </Screen>
@@ -80,5 +78,4 @@ const styles = StyleSheet.create({
   sub: { color: C.gray, fontSize: 15, marginTop: 6 },
   footer: { marginTop: 26, alignItems: 'center' },
   footerText: { color: C.gray, fontSize: 14 },
-  demo: { color: C.grayLight, fontSize: 12, textAlign: 'center', marginTop: 8 },
 });

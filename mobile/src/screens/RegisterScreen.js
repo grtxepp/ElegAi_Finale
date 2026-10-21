@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { Screen, Field, PrimaryButton, GhostButton, ErrorBox, Title } from '../components';
+import { Screen, Field, PasswordField, PrimaryButton, GhostButton, ErrorBox, Title } from '../components';
 import { useAuth } from '../context/AuthContext';
 import { errMsg } from '../api';
 import { C, DISPLAY } from '../theme';
@@ -57,8 +57,8 @@ export default function RegisterScreen({ navigation }) {
           {error ? <ErrorBox message={error} /> : null}
           <Field label="Full name" value={form.name} onChangeText={set('name')} placeholder="Maria Santos" />
           <Field label="Email" value={form.email} onChangeText={set('email')} placeholder="you@example.com" autoCapitalize="none" keyboardType="email-address" />
-          <Field label="Password" value={form.password} onChangeText={set('password')} placeholder="8+ characters, letters & numbers" secureTextEntry />
-          <Field label="Confirm password" value={form.confirm} onChangeText={set('confirm')} placeholder="Repeat your password" secureTextEntry />
+          <PasswordField label="Password" value={form.password} onChangeText={set('password')} placeholder="8+ characters, letters & numbers" />
+          <PasswordField label="Confirm password" value={form.confirm} onChangeText={set('confirm')} placeholder="Repeat your password" />
           <PrimaryButton title="Create my account" onPress={submit} loading={loading} />
           <GhostButton title="Already have an account? Sign in" onPress={() => navigation.navigate('Login')} />
         </View>

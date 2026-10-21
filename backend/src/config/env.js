@@ -81,8 +81,6 @@ export const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase() || (() 
 })();
 
 // ── Email (password reset) ─────────────────────────────────────────
-// Public base URL used in reset links (e.g. https://your-app.b4a.run).
-export const APP_URL = String(process.env.APP_URL || '').replace(/\/+$/, '');
 export const SMTP_HOST = process.env.SMTP_HOST || '';
 export const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
 export const SMTP_SECURE = (process.env.SMTP_SECURE || 'false') === 'true';

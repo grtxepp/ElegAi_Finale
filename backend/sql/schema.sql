@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   expires_at DATETIME NOT NULL,
   used       TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_reset_hash (token_hash),
   CONSTRAINT fk_reset_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

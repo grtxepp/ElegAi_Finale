@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { CAPTCHA_ENABLED, TURNSTILE_SITE_KEY, APP_URL } from '../config/env.js';
-import { sendPasswordResetEmail } from '../services/mail.service.js';
+import { CAPTCHA_ENABLED, TURNSTILE_SITE_KEY } from '../config/env.js';
+import { sendPasswordResetCodeEmail } from '../services/mail.service.js';
 import {
   createCustomerAccount,
   findUserByEmail,
@@ -9,6 +9,7 @@ import {
   findProfileByUserId,
   findUserIdByEmail,
   createPasswordResetToken,
+  invalidatePasswordResetTokens,
   consumePasswordResetToken,
 } from '../repositories/auth.repository.js';
 import { signToken, publicUser } from '../utils/tokens.js';
@@ -75,41 +76,53 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   const userId = await findUserIdByEmail(email);
 
   if (userId) {
-    const token = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-    await createPasswordResetToken(userId, tokenHash);
+    // Six-digit code, hashed together with the user id so identical codes for
+    // different users never collide in the token_hash column.
+    const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+    const codeHash = crypto.createHash('sha256').update(`${userId}:${code}`).digest('hex');
+    await invalidatePasswordResetTokens(userId);
+    await createPasswordResetToken(userId, codeHash);
 
     const user = await findUserById(userId);
-    const base = APP_URL || `${req.protocol}://${req.get('host')}`;
-    const resetUrl = `${base}/reset-password/${token}`;
 
     let emailed = false;
     try {
-      const result = await sendPasswordResetEmail({ to: email, name: user?.name, resetUrl });
+      const result = await sendPasswordResetCodeEmail({ to: email, name: user?.name, code });
       emailed = result.sent;
     } catch (error) {
-      console.error('[mail] Could not send reset email:', error.message);
+      console.error('[mail] Could not send reset code:', error.message);
     }
 
+    // Local development without SMTP: expose the code so the flow is testable.
     if (!emailed && process.env.NODE_ENV !== 'production') {
       return res.json({
-        message: 'No mail server is configured, so here is your reset link.',
-        resetUrl,
+        message: 'No mail server is configured, so here is your reset code.',
+        devCode: code,
       });
     }
   }
 
   // Keep the same response whether or not the email exists.
-  res.json({ message: 'If an account exists for that email, a reset link has been sent.' });
+  res.json({ message: 'If an account exists for that email, a 6-digit reset code has been sent.' });
 });
 
-/** POST /api/auth/reset-password — consume a one-time token + set password. */
+/** POST /api/auth/reset-password — consume a one-time code + set password. */
 export const resetPassword = asyncHandler(async (req, res) => {
-  requireFields(req.body, ['token', 'password']);
+  requireFields(req.body, ['email', 'code', 'password']);
+  validateEmail(req.body);
   validatePassword(req.body);
-  const tokenHash = crypto.createHash('sha256').update(String(req.body.token)).digest('hex');
+
+  const email = String(req.body.email).toLowerCase().trim();
+  const code = String(req.body.code).replace(/\s+/g, '');
+  if (!/^\d{6}$/.test(code)) throw badRequest('Enter the 6-digit code from your email.');
+
+  const userId = await findUserIdByEmail(email);
+  if (!userId) throw badRequest('That code is invalid or has expired.');
+
+  const codeHash = crypto.createHash('sha256').update(`${userId}:${code}`).digest('hex');
   const passwordHash = await bcrypt.hash(String(req.body.password), 10);
-  const record = await consumePasswordResetToken(tokenHash, passwordHash);
-  if (!record) throw badRequest('This reset link is invalid or has expired.');
+  const record = await consumePasswordResetToken(codeHash, passwordHash);
+  if (!record) throw badRequest('That code is invalid or has expired.');
+
   res.json({ message: 'Your password has been updated. You can now sign in.' });
 });

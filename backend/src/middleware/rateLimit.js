@@ -31,10 +31,10 @@ export const registerLimiter = limiter({
   message: 'Too many account-creation attempts. Please try again later.',
 });
 
-/** Shared limit for requesting or consuming password-reset links. */
+/** Shared limit for requesting or consuming password-reset codes. */
 export const passwordResetLimiter = limiter({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  max: 10,
   message: 'Too many password-reset attempts. Please try again later.',
 });
 

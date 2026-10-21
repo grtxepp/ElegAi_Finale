@@ -35,6 +35,33 @@ export function Field({ label, error, ...props }) {
 }
 
 /* ── Buttons ───────────────────────────────────────────────────────── */
+export function PasswordField({ label, error, style, ...props }) {
+  const [visible, setVisible] = React.useState(false);
+  return (
+    <View style={{ marginBottom: 14 }}>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
+      <View style={{ justifyContent: 'center' }}>
+        <TextInput
+          placeholderTextColor={C.grayLight}
+          secureTextEntry={!visible}
+          style={[styles.input, { paddingRight: 46 }, style, error && { borderColor: C.danger }]}
+          {...props}
+        />
+        <Pressable
+          onPress={() => setVisible((v) => !v)}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={visible ? 'Hide password' : 'Show password'}
+          style={{ position: 'absolute', right: 10, padding: 4 }}
+        >
+          <Ionicons name={visible ? 'eye-off-outline' : 'eye-outline'} size={20} color={C.gray} />
+        </Pressable>
+      </View>
+      {error ? <Text style={styles.fieldError}>{error}</Text> : null}
+    </View>
+  );
+}
+
 export function PrimaryButton({ title, onPress, loading = false, disabled, style }) {
   return (
     <Pressable

@@ -38,11 +38,15 @@ export const findUserIdByEmail = async (email) => {
 
 export const createPasswordResetToken = (userId, tokenHash) =>
   execute(
-    'INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR))',
+    'INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 15 MINUTE))',
     [userId, tokenHash]
   );
 
-/** Set a password and consume its reset token atomically. */
+/** Invalidate any outstanding reset codes for a user before issuing a new one. */
+export const invalidatePasswordResetTokens = (userId) =>
+  execute('UPDATE password_reset_tokens SET used = 1 WHERE user_id = ? AND used = 0', [userId]);
+
+/** Set a password and consume its reset code atomically. */
 export const consumePasswordResetToken = (tokenHash, passwordHash) =>
   withTransaction(async (connection) => {
     const [rows] = await connection.query(

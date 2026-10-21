@@ -12,7 +12,7 @@ export const setToken = (t) => {
 };
 export const getToken = () => TOKEN;
 
-const api = axios.create({ baseURL: API_BASE, timeout: 30000 });
+const api = axios.create({ baseURL: `${API_BASE}/api`, timeout: 30000 });
 
 api.interceptors.request.use((cfg) => {
   if (TOKEN) cfg.headers.Authorization = `Bearer ${TOKEN}`;

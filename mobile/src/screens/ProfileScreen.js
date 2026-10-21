@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Field, PrimaryButton, GhostButton, ErrorBox, SectionTitle } from '../components';
+import { Field, PasswordField, PrimaryButton, GhostButton, ErrorBox, SectionTitle } from '../components';
 import { ChipRow } from '../components';
 import api, { errMsg } from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -111,9 +111,9 @@ export default function ProfileScreen() {
         <View style={{ marginTop: 22 }}>
           <SectionTitle>Change password</SectionTitle>
           <View style={{ marginTop: 14 }}>
-            <Field label="Current password" value={pwd.currentPassword} onChangeText={(v) => setPwd({ ...pwd, currentPassword: v })} secureTextEntry />
-            <Field label="New password" value={pwd.newPassword} onChangeText={(v) => setPwd({ ...pwd, newPassword: v })} secureTextEntry />
-            <Field label="Confirm new password" value={pwd.confirm} onChangeText={(v) => setPwd({ ...pwd, confirm: v })} secureTextEntry />
+            <PasswordField label="Current password" value={pwd.currentPassword} onChangeText={(v) => setPwd({ ...pwd, currentPassword: v })} />
+            <PasswordField label="New password" value={pwd.newPassword} onChangeText={(v) => setPwd({ ...pwd, newPassword: v })} />
+            <PasswordField label="Confirm new password" value={pwd.confirm} onChangeText={(v) => setPwd({ ...pwd, confirm: v })} />
             <GhostButton title="Update password" onPress={changePassword} />
           </View>
         </View>

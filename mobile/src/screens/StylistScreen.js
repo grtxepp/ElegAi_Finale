@@ -23,6 +23,11 @@ export default function StylistScreen({ navigation }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [requestOpen, setRequestOpen] = useState(false);
+  const [requestBusy, setRequestBusy] = useState(false);
+  const [requestError, setRequestError] = useState('');
+  const [requestDone, setRequestDone] = useState(false);
+  const [requestForm, setRequestForm] = useState({ sizing: '', measurements: '', notes: '' });
 
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -50,10 +55,39 @@ export default function StylistScreen({ navigation }) {
     try {
       const { data } = await api.post('/stylist/recommend', fd);
       setResult(data);
+      setRequestDone(false);
+      setRequestOpen(false);
     } catch (e) {
       setError(errMsg(e));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitRequest = async () => {
+    setRequestError('');
+    setRequestBusy(true);
+    try {
+      const prompt = [
+        form.occasion && `Occasion: ${form.occasion}`,
+        form.style && `Style: ${form.style}`,
+        form.color && `Color: ${form.color}`,
+        form.fit && `Fit: ${form.fit}`,
+        form.size && `Size: ${form.size}`,
+      ].filter(Boolean).join(' · ') || 'AI Stylist look request';
+
+      await api.post('/chatbot/look-request', {
+        prompt,
+        sizing: requestForm.sizing || form.size || null,
+        measurements: requestForm.measurements || form.measurements || null,
+        notes: requestForm.notes || form.notes || null,
+      });
+      setRequestDone(true);
+      setRequestOpen(false);
+    } catch (e) {
+      setRequestError(errMsg(e));
+    } finally {
+      setRequestBusy(false);
     }
   };
 
@@ -167,6 +201,38 @@ export default function StylistScreen({ navigation }) {
                 </View>
               </View>
             ))}
+
+            <View style={[card, { marginTop: 18, padding: 16 }]}>
+              {requestDone ? (
+                <View>
+                  <Text style={styles.requestDoneTitle}>Request sent</Text>
+                  <Text style={styles.requestHint}>The boutique has your look request and will reach out shortly.</Text>
+                </View>
+              ) : requestOpen ? (
+                <View>
+                  <SectionTitle>Request this look</SectionTitle>
+                  <Text style={styles.requestHint}>Send this look to the boutique with your sizing.</Text>
+                  {requestError ? <View style={{ marginTop: 10 }}><ErrorBox message={requestError} /></View> : null}
+                  <Text style={styles.label}>Sizing</Text>
+                  <TextInput style={styles.input} placeholder="e.g. M, or bust/waist/hips" placeholderTextColor={C.grayLight} value={requestForm.sizing} onChangeText={(v) => setRequestForm((f) => ({ ...f, sizing: v }))} />
+                  <Text style={styles.label}>Measurements</Text>
+                  <TextInput style={[styles.input, { minHeight: 56 }]} multiline placeholder="e.g. bust 88, waist 66, hips 92" placeholderTextColor={C.grayLight} value={requestForm.measurements} onChangeText={(v) => setRequestForm((f) => ({ ...f, measurements: v }))} />
+                  <Text style={styles.label}>Notes</Text>
+                  <TextInput style={[styles.input, { minHeight: 56 }]} multiline placeholder="Anything else the boutique should know" placeholderTextColor={C.grayLight} value={requestForm.notes} onChangeText={(v) => setRequestForm((f) => ({ ...f, notes: v }))} />
+                  <View style={{ marginTop: 14 }}>
+                    <PrimaryButton title={requestBusy ? 'Sending…' : 'Send request'} onPress={submitRequest} loading={requestBusy} />
+                    <Pressable onPress={() => setRequestOpen(false)} style={{ alignItems: 'center', paddingVertical: 12 }}>
+                      <Text style={{ color: C.gray, fontSize: 13 }}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : (
+                <Pressable style={({ pressed }) => [styles.requestBtn, pressed && { opacity: 0.85 }]} onPress={() => setRequestOpen(true)}>
+                  <Ionicons name="paper-plane-outline" size={16} color={C.white} />
+                  <Text style={styles.requestBtnText}>Request this look</Text>
+                </Pressable>
+              )}
+            </View>
           </>
         ) : result ? (
           <EmptyState title="No strong matches yet" message="Try widening your preferences." />
@@ -190,4 +256,8 @@ const styles = StyleSheet.create({
   recReason: { flex: 1, fontSize: 13, color: C.gray },
   viewBtn: { backgroundColor: C.charcoal, borderRadius: 999, paddingVertical: 9, alignItems: 'center', marginTop: 10 },
   viewBtnText: { color: C.white, fontSize: 13, fontWeight: '700' },
+  requestBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: C.gold, borderRadius: 999, paddingVertical: 13 },
+  requestBtnText: { color: C.white, fontSize: 14, fontWeight: '700' },
+  requestDoneTitle: { fontFamily: DISPLAY, fontSize: 18, fontWeight: '700', color: C.charcoal },
+  requestHint: { color: C.gray, fontSize: 13, marginTop: 4, lineHeight: 19 },
 });

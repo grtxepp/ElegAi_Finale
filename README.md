@@ -73,7 +73,7 @@ The frontend has no database credentials and never runs SQL. Backend controllers
 - The browser only calls the Express API through `/api`; it never connects to the database.
 - AI API keys and the Turnstile secret stay in backend environment variables, never in frontend code.
 - Passwords are hashed with **bcrypt**. Sign-in/registration returns a signed **JWT access token** (default expiry: 7 days, configurable with `JWT_EXPIRES_IN`), which the frontend sends as `Authorization: Bearer <token>`; admin routes check the role in that token.
-- Password-reset links use a separate random, single-use token; only its SHA-256 hash is stored, and it expires after one hour. There is no separate refresh-token flow; users sign in again after the JWT expires.
+- Password reset uses a 6-digit code emailed to the user. Only a SHA-256 hash of the code (bound to the user id) is stored; it expires after 15 minutes and can be used once. There is no separate refresh-token flow; users sign in again after the JWT expires.
 - Cloudflare Turnstile tokens are checked server-side. Authentication endpoints have stricter per-IP limits, with a general API limit as a backstop.
 - Inputs are validated on the server, uploads are checked by MIME type and size, and Helmet + CORS are configured on the API.
 
@@ -90,7 +90,7 @@ JWT_SECRET=your-own-long-random-secret-at-least-32-characters
 
 The public site key is returned to the browser by `/api/auth/captcha-config`. The secret key is only used by the server to verify tokens. Never put `TURNSTILE_SECRET_KEY`, `JWT_SECRET`, or AI API keys in frontend variables or a public GitHub repository. Production startup rejects a missing/weak `JWT_SECRET`.
 
-Default rate limits are 300 API requests per minute, 10 failed sign-ins per 15 minutes, 5 account-creation attempts per hour, 5 password-reset attempts per hour, and 30 AI stylist requests per hour per client IP. They use the built-in in-memory limiter store, which is appropriate for this single-instance class project; a multi-instance production service should use a shared store such as Redis.
+Default rate limits are 300 API requests per minute, 10 failed sign-ins per 15 minutes, 5 account-creation attempts per hour, 10 password-reset attempts per hour, and 30 AI stylist requests per hour per client IP. They use the built-in in-memory limiter store, which is appropriate for this single-instance class project; a multi-instance production service should use a shared store such as Redis.
 
 ---
 
@@ -196,7 +196,7 @@ Elegant Ivory A-Line Wedding Gown
 | Feature | Where |
 |---|---|
 | Registration / Login / Logout | `/register`, `/login` |
-| Password reset | `/forgot-password`, `/reset-password/:token` (token-based, single-use, hashed in DB) |
+| Password reset | `/forgot-password`, `/reset-password` (emailed 6-digit code, single-use, hashed in DB) |
 | Profile + measurements + style preferences | `/profile` |
 | Product catalog, search, filters, sort, pagination | `/catalog` |
 | Product details + related items | `/products/:id` |
@@ -228,8 +228,8 @@ Elegant Ivory A-Line Wedding Gown
 | POST | `/api/auth/login` | public | Sign in → JWT access token |
 | GET | `/api/auth/captcha-config` | public | Public Turnstile widget settings only |
 | GET | `/api/auth/me` | user | Current user + profile |
-| POST | `/api/auth/forgot-password` | public | Generate reset token (dev returns link) |
-| POST | `/api/auth/reset-password` | public | Consume token, set new password |
+| POST | `/api/auth/forgot-password` | public | Email a 6-digit reset code (dev returns code) |
+| POST | `/api/auth/reset-password` | public | Consume code + set new password |
 | GET/PUT | `/api/profile` | user | Read / update profile & style preferences |
 | POST | `/api/profile/change-password` | user | Change password |
 | GET | `/api/products` | public | List / search / filter / sort / paginate |
@@ -302,6 +302,7 @@ Order statuses: `Pending → Confirmed → Processing → Shipped → Delivered`
 - Product photos are static assets served from `backend/public/images`; admins can upload photos per product
   through the admin console (validated uploads stored under `backend/uploads`). The current Gemini integration
   handles stylist recommendations and optional photo analysis; it does **not** generate images at runtime.
-- Password reset emails are sent over SMTP. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
-  `SMTP_PASS`, `MAIL_FROM` and `APP_URL` in `backend/.env`. If SMTP is not configured, the reset
-  link is returned in the API response in development only.
+- Password reset codes are sent over SMTP. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`,
+  `SMTP_PASS` and `MAIL_FROM` in `backend/.env`. If SMTP is not configured, the code is returned
+  in the API response in development only. `APP_URL` is not needed for resets because the user
+  enters the code instead of clicking a link.

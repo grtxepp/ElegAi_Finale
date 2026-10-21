@@ -11,7 +11,7 @@ export default function ForgotPassword() {
   const [done, setDone] = useState(null);
   const [captchaToken, setCaptchaToken] = useState('');
   const [captchaRequired, setCaptchaRequired] = useState(true);
-  const [captchaResetKey, setCaptchaResetKey] = useState(0); // { message, resetUrl }
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export default function ForgotPassword() {
           <p className="eyebrow">Recover access</p>
           <h1 className="mt-2 font-display text-3xl font-semibold text-charcoal">Reset password</h1>
           <p className="mt-2 text-sm text-gray">
-            Enter the email on your account and we will email you a one-time reset link.
+            Enter the email on your account and we will send you a 6-digit reset code.
           </p>
 
           {error && (
@@ -59,21 +59,24 @@ export default function ForgotPassword() {
                 <MailCheck className="h-6 w-6 text-emerald-600" />
                 <p className="text-sm text-emerald-800">{done.message}</p>
               </div>
-              {done.resetUrl && (
+              {done.devCode && (
                 <div className="mt-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-gray">
-                    Development link (no mail server configured)
+                    Development code (no mail server configured)
                   </p>
-                  <Link
-                    to={done.resetUrl.replace(/^https?:\/\/[^/]+/, '')}
-                    className="mt-1 block break-all text-sm font-semibold text-gold-dark underline"
-                  >
-                    {done.resetUrl}
-                  </Link>
+                  <p className="mt-1 font-mono text-2xl font-bold tracking-[0.35em] text-charcoal">
+                    {done.devCode}
+                  </p>
                 </div>
               )}
-              <Link to="/login" className="mt-4 inline-block text-sm font-semibold text-charcoal hover:underline">
-                ← Back to sign in
+              <Link
+                to={{ pathname: '/reset-password', search: `?email=${encodeURIComponent(email)}` }}
+                className="btn-gold mt-5 block w-full text-center"
+              >
+                Enter reset code
+              </Link>
+              <Link to="/login" className="mt-4 block text-center text-sm font-semibold text-charcoal hover:underline">
+                Back to sign in
               </Link>
             </div>
           ) : (
@@ -91,10 +94,10 @@ export default function ForgotPassword() {
               </div>
               <Captcha onTokenChange={setCaptchaToken} onRequiredChange={setCaptchaRequired} resetKey={captchaResetKey} />
               <button type="submit" className="btn-gold w-full" disabled={loading}>
-                {loading ? 'Sending link…' : 'Send reset link'}
+                {loading ? 'Sending code…' : 'Send reset code'}
               </button>
               <Link to="/login" className="block text-center text-sm font-semibold text-charcoal hover:underline">
-                ← Back to sign in
+                Back to sign in
               </Link>
             </form>
           )}
